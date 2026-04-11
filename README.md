@@ -4,25 +4,59 @@
 > level. The agent does the grunt work; you stay in the driver's seat.
 
 A personal, opinionated collection of skills that give Claude Code and
-OpenAI Codex a **proper workflow — not vibes** — for the three phases
-of research work:
+OpenAI Codex a **proper workflow — not vibes** — for research work.
 
-1. **Polish** raw ideas into something worth writing down
-   (brainstorming, strategic triage, research).
-2. **Express** them rigorously (LaTeX authoring with claim graphs and
-   notation discipline, adversarial review passes, figure cleanup).
-3. **Implement** them properly (the RPI framework with Codex
-   architectural peer review and committed research/plan/report
-   artifacts).
+Research isn't a linear pipeline. It's a **loop**: you polish raw
+ideas, express them (to yourself in a paper, to others in a lecture,
+to code in an experiment), and the act of expressing reveals whether
+you actually understand. Gaps feed back into polishing. Implementation
+feeds back into the paper. Teaching feeds back into the research plan.
+**S-Tier researchers run this loop fast and rigorously.**
 
-Every skill is a workflow I've hit twice, captured once, and now
-reuse across papers, lectures, and projects. Format-compatible with
-**both Claude Code and Codex** — clone once, symlink to the other
+```
+      ┌─────────── Polish ───────────┐
+      │  raw ideas → worth writing   │
+      │   down. brainstorm, triage,  │
+      │   research-the-problem.      │
+      └──────┬───────────────┬───────┘
+             │               │
+             ↓               ↑        ↖
+       ┌─────────┐   gaps found during
+       │ Express │   expressing/teaching
+       │  it.    │   kick you back here.
+       └────┬────┘
+            │
+            ↓
+    ┌───────────────┐
+    │   Implement   │ ← RPI + Codex adversarial review
+    │ (experiments, │
+    │  infra, code) │
+    └───────────────┘
+```
+
+Every skill in this repo is a workflow I've hit twice, captured once,
+and now reuse across papers, lectures, and projects. Format-compatible
+with **both Claude Code and Codex** — clone once, symlink to the other
 tool's path, both see the same source of truth.
 
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![tools](https://img.shields.io/badge/works_with-Claude_Code_%7C_Codex-purple)
 ![format](https://img.shields.io/badge/format-SKILL.md-green)
+
+---
+
+## 🎯 Who this is for
+
+- **Academic researchers** who want agents to act like senior
+  collaborators — pattern-matching failure modes, enforcing rigor,
+  catching the thing you'd miss on your third read.
+- **PhD students** drafting theory-heavy papers where claim graphs,
+  notation discipline, and proof obligations are load-bearing.
+- **ML engineers** running research infrastructure who need
+  structured engineering (plan → adversarial review → implement)
+  instead of brainstorm-and-hope.
+- **Educators** who want lectures to serve as a *Feynman test* on
+  their own understanding, not just an output artifact.
 
 ---
 
@@ -40,82 +74,213 @@ That's it. Start a new Claude Code or Codex session and the skills are
 live. Trigger them by asking for what they do — the model reads each
 skill's `description` field and picks up the right one automatically.
 
-```
-you: "run an RPI cycle on this codebase"            → /rpi-workflow
-you: "review this figure for label collisions"      → /tikz-figure-review
-you: "plan the structure for our new paper"         → /rigorous-paper-author
-you: "address these reviewer comments on our paper" → /refining-ml-papers
-```
+---
+
+## 🧭 Start here
+
+Not sure where to begin? Match your situation to the first skill:
+
+| If you're... | Start with | Because |
+|---|---|---|
+| **Sitting with a raw, half-formed research idea** | `research-companion` *(external)* | Adversarial sparring partner on the idea itself before you invest any drafting effort. |
+| **Trying to prove you actually understand a concept** | [`enhancing-latex-lectures`](enhancing-latex-lectures/) | **Feynman test.** If you can't teach it with a stunning visualization, you haven't earned the right to claim it in a paper yet. |
+| **Drafting a theory-heavy paper from scratch** | [`rigorous-paper-author`](rigorous-paper-author/) | Enforces claim graphs, notation ledgers, and theorem discipline before you write a single sentence. |
+| **Hardening a draft before submission** | [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | 7-pass adversarial read finds the cracks a sympathetic eye misses. |
+| **Reviewer comments just came back** | [`refining-ml-papers`](refining-ml-papers/) | Addresses comments without breaking the claim graph; surgical revisions. |
+| **Starting a complex engineering task** | [`rpi-workflow`](rpi-workflow/) | Research the codebase, plan the change, adversarially review the plan, *then* implement. No vibe-coding. |
+| **One figure looks wrong** | [`tikz-figure-review`](tikz-figure-review/) | 11 documented failure modes + standalone iteration loop. |
+| **Paper accepted, conference coming up** | `poster` *(external)* | Turns paper source + website into shippable print-ready poster with a live in-browser editor. |
 
 ---
 
-## 🌟 Flagship: the RPI framework
+## 🔁 The research loop: Polish ↔ Express ↔ Implement
 
-[`rpi-workflow`](rpi-workflow/) is the crown jewel — a proper workflow
-for going from a vague ask to a landed change. **Research → Plan →
-Implement**, with **Codex architectural peer review baked in** so a
-second model adversarially reviews the plan before you spend any
-implementation effort.
+The skills group into three phases, but treat them as a **loop, not a
+pipeline**. Every time you try to *express* something — in a draft,
+in a review, in a lecture, in code — you find out whether your
+understanding is real. Gaps you discover go back into polishing.
+Implementations that don't match the paper go back into expressing.
 
-The agent walks you through three phases, and all artifacts land
-under `docs/` in your project root as tracked Markdown:
+### 1. Polish 🧠 — raw ideas → worth writing down
 
-1. **Research** — the agent builds a shared understanding of the
-   problem with you, surfaces unknowns, maps constraints, and writes
-   a research doc you can argue with.
-2. **Plan** — the agent drafts a concrete implementation plan, then
-   you hand it to Codex (or another model) for adversarial
-   architectural review. Iterate until the plan is defensible.
-3. **Implement** — the agent executes the approved plan with
-   checkpoints, commits implementation reports back to `docs/`, and
-   a future session (or a human collaborator) can pick up exactly
-   where you left off.
+Brainstorming, strategic triage, research-the-problem.
+
+| Skill | Your specialist | What they do |
+|---|---|---|
+| `research-companion` *(external — [Andre Huang](https://github.com/andrehuang/research-companion))* | **Research Strategist / Devil's Advocate** | Idea critic, research strategist, structured brainstorming. When you want an adversarial sparring partner on a half-formed idea (inspired by Carlini's research methodology). |
+
+### 2. Express 📝 — worth writing down → defensibly correct *and teachable*
+
+Authoring, review, revision, teaching, visualization. This is also
+where the **Feynman test** lives: if you can't teach it simply, you
+don't understand it, and you go back to Polish.
+
+| Skill | Your specialist | What they do |
+|---|---|---|
+| [`rigorous-paper-author`](rigorous-paper-author/) | **Theory-Paper Ghostwriter** | Draft mathematically rigorous LaTeX papers with claim graphs, notation ledgers, theorem discipline, and numerical-analysis rigor. |
+| [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | **PhD-Committee Reviewer** | 7-pass adversarial technical review (structure, notation, theorem/proof, numerics, complexity, figures, coherence) with a static Python verifier for automated triage. |
+| [`refining-ml-papers`](refining-ml-papers/) | **Revision Surgeon** | Revise ML/scientific LaTeX papers based on reviewer or advisor feedback — structural reorganization, table instantiation, cross-file deduplication. |
+| [`enhancing-latex-lectures`](enhancing-latex-lectures/) | **Feynman-Test Partner** | Pattern-matches against exemplary pedagogical material (e.g. Todorov's PDFs) and adds stunning visualizations, concrete-to-abstract progressions, insight boxes. **Making a concept teachable is how you discover whether you understand it well enough to write the paper.** |
+| [`tikz-figure-review`](tikz-figure-review/) | **Figure Layout Engineer** | Review and fix alignment, label collision, clipping, legend-over-data issues in TikZ/pgfplots figures. 11 failure modes + copy-paste snippet catalog. |
+| `poster` *(external — [Ethan Weber](https://github.com/ethanweber/posterskill))* | **Conference Poster Designer** | Generate print-ready conference posters from your paper source and project website, with a live in-browser layout editor. |
+
+### 3. Implement ⚙️ — teachable → working code
+
+Research the codebase, plan the change, adversarially review the plan,
+*then* implement. No vibe-coding.
+
+| Skill | Your specialist | What they do |
+|---|---|---|
+| ⭐ [`rpi-workflow`](rpi-workflow/) | **Research Engineer / Tech Lead** *(with Codex on speed-dial)* | **Research → Plan → Implement** with Codex architectural peer review baked in. Never plans without understanding the codebase; always gets a second opinion before coding. Commits research/plan/feedback/impl/validation artifacts to `docs/`. This is the flagship — see the deep dive below. |
+
+---
+
+## 🔗 How skills chain together
+
+Phases aren't silos. Each skill produces artifacts that downstream
+skills consume, so a full cycle threads through multiple skills:
+
+- **Polish → Express (idea to draft).** `research-companion` produces
+  a validated research direction. Hand it to `rigorous-paper-author`
+  (papers) or `rpi-workflow`'s research phase (code).
+- **Express → Express (draft ↔ review loop).**
+  `rigorous-paper-author` emits a draft with a claim graph.
+  `rigorous-paper-reviewer` reads the draft and writes a 7-pass review
+  report. `refining-ml-papers` reads the review (or external reviewer
+  comments) and produces a revised version. `tikz-figure-review`
+  fixes any figures flagged in the review. The whole loop converges
+  on a camera-ready PDF.
+- **Express → Polish (Feynman kickback).**
+  `enhancing-latex-lectures` forces you to explain a concept simply
+  with beautiful visualizations. If you stumble, you have a gap — go
+  back to `research-companion` and polish your understanding before
+  continuing.
+- **Express → Implement (paper to code).** Once the claim graph and
+  proofs hold, `rpi-workflow` takes the experimental plan and turns
+  it into a concrete engineering task: research the codebase in
+  parallel with Explore agents, write a `PLAN-<repo>-<task>.md`, run
+  `codex exec` to get adversarial architectural feedback, iterate,
+  implement, commit an `IMPL-<repo>-<task>.md` report.
+- **Implement → Express (experiments back to paper).** When the RPI
+  implementation produces results, feed them back through
+  `refining-ml-papers` (to update Table 1 with concrete
+  instantiations) or `tikz-figure-review` (to render new convergence
+  plots cleanly).
+- **Express → Ship (paper to conference).** When the paper is
+  accepted, `poster` generates a print-ready conference poster from
+  the same source material.
+
+The common thread: **every skill writes its artifact to disk** (into
+`docs/` for RPI, into your LaTeX source tree for the paper skills, into
+a standalone figure scratch directory for `tikz-figure-review`), so
+the next skill in the chain — or a future session, or a human
+collaborator — can pick up exactly where the last one left off.
+
+---
+
+## 🌟 Flagship deep-dive: the RPI framework
+
+[`rpi-workflow`](rpi-workflow/) is the crown jewel and the engineering
+backbone of everything in this repo. **Research → Plan → Implement**,
+with **Codex architectural peer review baked in** so a second model
+adversarially reviews the plan before you spend any implementation
+effort.
+
+It's not "senior researcher" in the abstract — it's a concrete
+engineering discipline for people who refuse to vibe-code. The skill
+walks you through six steps, all artifacts landing under `docs/`:
+
+```
+docs/
+├── research/YYYY-MM-DD-topic.md    # parallel Explore agents dump findings here
+└── plans/
+    ├── PLAN-<repo>-<task>.md        # Claude writes: goal, key files,
+    │                                 # problem, solution, success criteria,
+    │                                 # risks, 3–5 questions for Codex
+    ├── FEEDBACK-<repo>-<task>.md    # Codex writes: adversarial review
+    │                                 # (missing edge cases, better abstractions,
+    │                                 # risks Claude missed, phase reordering)
+    ├── IMPL-<repo>-<task>.md        # Claude writes after coding:
+    │                                 # what actually changed (path:line refs),
+    │                                 # deviations from plan and why, test results
+    └── VALIDATION-<repo>-<task>.md  # Codex writes (optional): success criteria met?
+```
+
+The non-negotiables RPI enforces:
+
+- **Research first.** Never plan without understanding the codebase.
+  Parallel Explore subagents gather context before a single line of
+  plan gets written.
+- **Compact findings.** `path:line` references, not code dumps.
+- **3–5 architectural questions for Codex.** Every plan explicitly
+  asks Codex to adversarially attack specific concerns.
+- **Parity checks before deletion.** Side-by-side comparison before
+  any old code gets removed.
+- **Independently mergeable phases.** Each plan phase must ship
+  on its own.
 
 The point isn't that RPI makes the model smarter. It's that the
-structure forces *you* and the agent into the same disciplined loop
-a senior staff researcher would use, instead of the default
-brainstorm-and-hope pattern. Trigger with `/rpi` or ask for a
-research-plan-implement cycle.
+structure forces *you* and the agent into a disciplined loop a senior
+tech lead would use, instead of brainstorm-and-hope. Trigger with
+`/rpi` or "start RPI".
 
 ---
 
-## 📚 Skills in this repo, by phase
+## 🎬 See it work — a realistic paper-hardening cycle
 
-### 1. Polish ideas
+Here's what a full cycle looks like through four of these skills on
+an actual use case: you have a draft, reviewers meet next week, you
+need to harden it.
 
-Raw → worth writing down. Brainstorming, strategic triage, research.
+```
+you: "my ICML draft is done, reviewers meet next week, help me harden it"
 
-| Skill | Purpose |
-|-------|---------|
-| `research-companion` *(external — [Andre Huang](https://github.com/andrehuang/research-companion))* | Idea critic, research strategist, enhanced brainstormer, structured brainstorming — for when you want an adversarial sparring partner on a half-formed idea (inspired by Carlini's research methodology). |
+Claude: invoking /rigorous-paper-reviewer
+  [7-pass review: finds notation drift between §3 and §5, a missing
+   proof obligation on Theorem 2, a claim in the abstract that doesn't
+   survive §4.2. Writes a review report in the standard format.]
 
-### 2. Express them rigorously
+you: "OK let's fix the proof first"
 
-Writing down → defensibly correct. Authoring, review, figure
-discipline, communication.
+Claude: invoking /rigorous-paper-author
+  [rewrites §2's notation ledger so §3 and §5 can agree, discharges
+   the missing proof obligation on Theorem 2, patches the abstract
+   claim to match what §4.2 actually shows. Updates the claim graph.]
 
-| Skill | Purpose |
-|-------|---------|
-| [`rigorous-paper-author`](rigorous-paper-author/) | Draft mathematically rigorous LaTeX papers with claim graphs, notation ledgers, theorem discipline, and numerical-analysis rigor. |
-| [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | Deep 7-pass technical review of LaTeX papers (structure, notation, theorem/proof, numerics, complexity, figures, coherence) with a static Python verifier for automated triage. |
-| [`refining-ml-papers`](refining-ml-papers/) | Revise ML/scientific LaTeX papers based on reviewer or advisor feedback — structural reorganization, table instantiation, cross-file deduplication. |
-| [`tikz-figure-review`](tikz-figure-review/) | Review and fix alignment, label collision, clipping, legend-over-data issues in TikZ/pgfplots figures. 11 failure modes + copy-paste snippet catalog. |
-| [`enhancing-latex-lectures`](enhancing-latex-lectures/) | Enhance LaTeX lecture notes with visualizations, concrete examples, and pedagogical patterns from reference material. |
-| `poster` *(external — [Ethan Weber](https://github.com/ethanweber/posterskill))* | Generate print-ready conference posters from your paper source and project website, with a live in-browser layout editor. |
+you: "figure 3 looks weird in the PDF"
 
-### 3. Implement them properly
+Claude: invoking /tikz-figure-review
+  [extracts figure 3 as a standalone, identifies a legend-over-data
+   collision (§2.1 of the figure-review skill) and a label-on-marker
+   collision on two equilibria (§2.2b — the #1 phase-portrait footgun).
+   Fixes both in the standalone, syncs the tikzpicture body back to
+   the main paper, re-renders, verifies the PNG is clean.]
 
-Written-down → shipped. Structured engineering with adversarial review.
+[reviewer comments come back Monday]
 
-| Skill | Purpose |
-|-------|---------|
-| ⭐ [`rpi-workflow`](rpi-workflow/) | **Research → Plan → Implement** workflow with Codex architectural peer review. Forces structured thinking before code, creates committed research/plan/report artifacts in `docs/`. This is the flagship. |
+you: "address these 14 comments"
+
+Claude: invoking /refining-ml-papers
+  [structural reorganization across 3 sections, concrete instantiation
+   of the abstract table from §4 with real results from your
+   experiment logs, cross-file deduplication between §2.1 and §B.1,
+   compilation verification after every change.]
+
+→ camera-ready
+```
+
+Notice the cycle: reviewer finds a gap → author fixes the gap → review
+finds the ripple → figure review catches collateral damage → refining
+threads the reviewer comments through everything. Each skill consumes
+the artifacts from the previous one. That's the chain.
+
+---
 
 ## 🤝 Installing the external skills
 
-The external skills above are maintained by their authors, not in
-this repo. Clone / install them directly so authors get the stars
-and you get updates from source:
+Two of the skills above are maintained by their authors, not in this
+repo. Clone / install them directly so authors get the stars and you
+get updates from source:
 
 ```bash
 # research-companion — install as a Claude Code plugin (phase 1: polish)
@@ -130,7 +295,7 @@ both visible to Claude Code and Codex with no extra setup.
 
 ---
 
-## 🛠 Why both Claude Code and Codex?
+## 🛠 Works with Claude Code *and* Codex
 
 Both tools converged on the same skill format: a `SKILL.md` file with
 YAML frontmatter (`name` + `description`) and optional `references/`,
@@ -147,6 +312,8 @@ with zero drift. See the
 [Codex skill docs](https://developers.openai.com/codex/skills) for
 each tool's discovery rules.
 
+---
+
 ## 🧠 How skills work (progressive disclosure)
 
 Skills are **model-invoked**: the model reads the `description` field
@@ -154,8 +321,7 @@ in each skill's frontmatter and triggers the right one automatically
 based on your request. You can also invoke explicitly with
 `/<skill-name>`.
 
-Each skill loads in three layers so your context window doesn't
-bloat:
+Each skill loads in three layers so your context window doesn't bloat:
 
 1. **Metadata** (name + description, ~100 words) — always in context
 2. **SKILL.md body** — loads only when the skill triggers (aim for
