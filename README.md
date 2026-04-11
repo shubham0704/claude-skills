@@ -25,10 +25,39 @@ per-skill detail lives inside each skill directory.
 
 ---
 
-## How Claude Code skills work
+## Installation
 
-Skills are **model-invoked**: Claude reads the `description` field in
-each skill's YAML frontmatter and triggers the relevant skill
+The skills in this repo use the shared `SKILL.md` + YAML-frontmatter
+format that works for **both Claude Code and OpenAI Codex** (the
+format is identical — only the discovery path differs). Clone once,
+symlink from the other tool's expected path:
+
+```bash
+# Clone into the Claude Code skill root:
+git clone https://github.com/<you>/claude-skills ~/.claude/skills
+
+# Expose the same skills to Codex (symlink, no duplication):
+mkdir -p ~/.agents
+ln -s ~/.claude/skills ~/.agents/skills
+```
+
+Now `git pull` updates both tools at once. Claude Code scans
+`~/.claude/skills/`; Codex scans `~/.agents/skills/` (user-level) or
+`$CWD/.agents/skills` (project-local). See
+[Anthropic skill docs](https://code.claude.com/docs/en/skills) and
+[Codex skill docs](https://developers.openai.com/codex/skills) for
+each tool's discovery rules.
+
+If you'd rather install the other direction (primary in `~/.agents/`,
+symlink to `~/.claude/skills`), either works — same result. Codex
+has one optional extra, `agents/openai.yaml` per skill, which is
+Codex-specific metadata (not in SKILL.md) — add it per-skill if you
+need tighter Codex integration.
+
+## How skills work
+
+Skills are **model-invoked**: the model reads the `description` field
+in each skill's YAML frontmatter and triggers the relevant skill
 automatically based on your request. You don't need to name the skill
 explicitly — though you can, via `/<skill-name>` or by referencing it
 in prose.
