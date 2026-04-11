@@ -11,17 +11,31 @@ per-skill detail lives inside each skill directory.
 
 ---
 
-## Skills
+## Skills in this repo
 
 | Skill | One-line purpose |
 |-------|------------------|
 | [`enhancing-latex-lectures`](enhancing-latex-lectures/) | Enhance LaTeX lecture notes with visualizations, concrete examples, and pedagogical patterns from reference material. |
-| [`poster`](poster/) | Design academic posters. |
 | [`refining-ml-papers`](refining-ml-papers/) | Revise ML/scientific LaTeX papers based on reviewer or advisor feedback — structural reorganization, table instantiation, cross-file deduplication. |
 | [`rigorous-paper-author`](rigorous-paper-author/) | Draft mathematically rigorous LaTeX papers with claim graphs, notation ledgers, and theorem discipline. |
 | [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | Deep technical review of LaTeX papers in 7 ordered passes, with a static Python verifier for automated triage. |
 | [`rpi-workflow`](rpi-workflow/) | Research–Plan–Implement workflow with Codex peer review. |
 | [`tikz-figure-review`](tikz-figure-review/) | Review and fix alignment, label collision, clipping, and legend-over-data issues in TikZ/pgfplots figures. |
+
+## External skills I use (installed separately)
+
+These are skills I rely on but didn't write — clone or install them
+directly from their authors. They're listed here so my setup is
+reproducible and the original authors get credit.
+
+| Skill | Author | Install | Purpose |
+|-------|--------|---------|---------|
+| `poster` ([posterskill](https://github.com/ethanweber/posterskill)) | [Ethan Weber](https://github.com/ethanweber) | `git clone git@github.com:ethanweber/posterskill.git ~/.claude/skills/poster` | Generate print-ready conference posters from your paper source + project website, with a live in-browser layout editor. |
+| `research-companion` ([repo](https://github.com/andrehuang/research-companion)) | [Andre Huang](https://github.com/andrehuang) | Claude Code plugin — install via marketplace | Strategic research thinking agents — idea critic, research strategist, enhanced brainstormer, structured brainstorming skill for research ideation (inspired by Carlini's research methodology). |
+
+If you install these alongside the ones in this repo, the same
+symlink (`~/.agents/skills → ~/.claude/skills`) makes everything
+visible to both Claude Code and Codex.
 
 ---
 
