@@ -1,20 +1,24 @@
 # S-Tier Staff Researcher
 
-> Skills that make Claude Code and OpenAI Codex operate at
-> **staff-researcher level** — structured research, rigorous LaTeX
-> authoring, pitiless review, and the edit loop to keep all of it
-> tight.
+> Skills + workflows that help **you** operate at staff-researcher
+> level. The agent does the grunt work; you stay in the driver's seat.
 
-A personal, opinionated collection of distilled academic research
-workflows: the kind of patterns a senior collaborator brings to the
-table — pattern-matching failure modes, enforcing structural rigor,
-catching the thing you would have missed on your third read. Each
-skill in here is a workflow I've hit twice, captured once, and now
-reuse across papers, lectures, and projects.
+A personal, opinionated collection of skills that give Claude Code and
+OpenAI Codex a **proper workflow — not vibes** — for the three phases
+of research work:
 
-Every skill is format-compatible with **both Claude Code and Codex**.
-Clone once, symlink to the other tool's path, and both see the same
-source of truth.
+1. **Polish** raw ideas into something worth writing down
+   (brainstorming, strategic triage, research).
+2. **Express** them rigorously (LaTeX authoring with claim graphs and
+   notation discipline, adversarial review passes, figure cleanup).
+3. **Implement** them properly (the RPI framework with Codex
+   architectural peer review and committed research/plan/report
+   artifacts).
+
+Every skill is a workflow I've hit twice, captured once, and now
+reuse across papers, lectures, and projects. Format-compatible with
+**both Claude Code and Codex** — clone once, symlink to the other
+tool's path, both see the same source of truth.
 
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![tools](https://img.shields.io/badge/works_with-Claude_Code_%7C_Codex-purple)
@@ -47,51 +51,82 @@ you: "address these reviewer comments on our paper" → /refining-ml-papers
 
 ## 🌟 Flagship: the RPI framework
 
-[`rpi-workflow`](rpi-workflow/) is the crown jewel. **Research →
-Plan → Implement** is a structured protocol for complex engineering
-and research tasks, with **Codex architectural peer review baked in**.
-Instead of jumping straight from a vague ask into a half-formed
-implementation, RPI forces the model to:
+[`rpi-workflow`](rpi-workflow/) is the crown jewel — a proper workflow
+for going from a vague ask to a landed change. **Research → Plan →
+Implement**, with **Codex architectural peer review baked in** so a
+second model adversarially reviews the plan before you spend any
+implementation effort.
 
-1. **Research** — build a shared understanding of the problem,
-   surface the unknowns, identify the constraints.
-2. **Plan** — write the plan down as a concrete doc, then hand it to
-   Codex (or another model) for an adversarial architectural review.
-3. **Implement** — execute the approved plan with checkpoints, with
-   implementation reports committed back to `docs/`.
+The agent walks you through three phases, and all artifacts land
+under `docs/` in your project root as tracked Markdown:
 
-All artifacts land under `docs/` in the project root as tracked
-Markdown, so future sessions (and humans) can pick up exactly where
-you left off. Trigger with `/rpi` or by asking for a research-plan-
-implement cycle.
+1. **Research** — the agent builds a shared understanding of the
+   problem with you, surfaces unknowns, maps constraints, and writes
+   a research doc you can argue with.
+2. **Plan** — the agent drafts a concrete implementation plan, then
+   you hand it to Codex (or another model) for adversarial
+   architectural review. Iterate until the plan is defensible.
+3. **Implement** — the agent executes the approved plan with
+   checkpoints, commits implementation reports back to `docs/`, and
+   a future session (or a human collaborator) can pick up exactly
+   where you left off.
+
+The point isn't that RPI makes the model smarter. It's that the
+structure forces *you* and the agent into the same disciplined loop
+a senior staff researcher would use, instead of the default
+brainstorm-and-hope pattern. Trigger with `/rpi` or ask for a
+research-plan-implement cycle.
 
 ---
 
-## 📚 All skills in this repo
+## 📚 Skills in this repo, by phase
+
+### 1. Polish ideas
+
+Raw → worth writing down. Brainstorming, strategic triage, research.
 
 | Skill | Purpose |
 |-------|---------|
-| ⭐ [`rpi-workflow`](rpi-workflow/) | **Research → Plan → Implement** workflow with Codex architectural peer review. Forces structured thinking before code and creates committed research/plan/report artifacts in `docs/`. |
+| `research-companion` *(external — [Andre Huang](https://github.com/andrehuang/research-companion))* | Idea critic, research strategist, enhanced brainstormer, structured brainstorming — for when you want an adversarial sparring partner on a half-formed idea (inspired by Carlini's research methodology). |
+
+### 2. Express them rigorously
+
+Writing down → defensibly correct. Authoring, review, figure
+discipline, communication.
+
+| Skill | Purpose |
+|-------|---------|
 | [`rigorous-paper-author`](rigorous-paper-author/) | Draft mathematically rigorous LaTeX papers with claim graphs, notation ledgers, theorem discipline, and numerical-analysis rigor. |
 | [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | Deep 7-pass technical review of LaTeX papers (structure, notation, theorem/proof, numerics, complexity, figures, coherence) with a static Python verifier for automated triage. |
 | [`refining-ml-papers`](refining-ml-papers/) | Revise ML/scientific LaTeX papers based on reviewer or advisor feedback — structural reorganization, table instantiation, cross-file deduplication. |
 | [`tikz-figure-review`](tikz-figure-review/) | Review and fix alignment, label collision, clipping, legend-over-data issues in TikZ/pgfplots figures. 11 failure modes + copy-paste snippet catalog. |
 | [`enhancing-latex-lectures`](enhancing-latex-lectures/) | Enhance LaTeX lecture notes with visualizations, concrete examples, and pedagogical patterns from reference material. |
+| `poster` *(external — [Ethan Weber](https://github.com/ethanweber/posterskill))* | Generate print-ready conference posters from your paper source and project website, with a live in-browser layout editor. |
 
-## 🤝 External skills I use (installed separately)
+### 3. Implement them properly
 
-Skills I rely on but didn't write — clone or install them directly
-from their authors. Listed here so my setup is reproducible and the
-original authors get visible credit.
+Written-down → shipped. Structured engineering with adversarial review.
 
-| Skill | Author | Install | Purpose |
-|-------|--------|---------|---------|
-| `poster` ([posterskill](https://github.com/ethanweber/posterskill)) | [Ethan Weber](https://github.com/ethanweber) | `git clone git@github.com:ethanweber/posterskill.git ~/.claude/skills/poster` | Generate print-ready conference posters from your paper source + project website, with a live in-browser layout editor. |
-| `research-companion` ([repo](https://github.com/andrehuang/research-companion)) | [Andre Huang](https://github.com/andrehuang) | Claude Code plugin — install via marketplace | Strategic research thinking agents — idea critic, research strategist, enhanced brainstormer, structured brainstorming skill for research ideation (inspired by Carlini's research methodology). |
+| Skill | Purpose |
+|-------|---------|
+| ⭐ [`rpi-workflow`](rpi-workflow/) | **Research → Plan → Implement** workflow with Codex architectural peer review. Forces structured thinking before code, creates committed research/plan/report artifacts in `docs/`. This is the flagship. |
+
+## 🤝 Installing the external skills
+
+The external skills above are maintained by their authors, not in
+this repo. Clone / install them directly so authors get the stars
+and you get updates from source:
+
+```bash
+# research-companion — install as a Claude Code plugin (phase 1: polish)
+# see https://github.com/andrehuang/research-companion for plugin install
+
+# posterskill — clone into ~/.claude/skills/poster (phase 2: express)
+git clone git@github.com:ethanweber/posterskill.git ~/.claude/skills/poster
+```
 
 The same symlink above (`~/.agents/skills → ~/.claude/skills`) makes
-all of these visible to both Claude Code and Codex if you install
-them alongside.
+both visible to Claude Code and Codex with no extra setup.
 
 ---
 
