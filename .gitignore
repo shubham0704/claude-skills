@@ -1,0 +1,32 @@
+# macOS cruft
+.DS_Store
+*.swp
+*.swo
+
+# LaTeX build artifacts (in case any skill bundles LaTeX examples)
+*.aux
+*.log
+*.out
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
+# Python cruft (for skills with scripts/)
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Eval workspaces (skill-creator eval runs)
+*-workspace/
+
+# Private / WIP skills — uncomment the lines below to exclude specific
+# skills from the public repo. Any directory name listed here will be
+# tracked locally but not pushed.
+#
+# private-skill-name/
+# client-specific-skill/
+# draft-WIP/
