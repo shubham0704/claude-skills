@@ -1,94 +1,140 @@
-# Claude Code Skills
+# S-Tier Staff Researcher
 
-A personal collection of Claude Code skills — distilled workflows,
-review rubrics, and writing/building patterns I've accumulated across
-projects. Each skill lives in its own directory with a `SKILL.md`
-(required), optional `references/`, `scripts/`, and `assets/`, and a
-`CHANGELOG.md` that records how the skill evolved.
+> Skills that make Claude Code and OpenAI Codex operate at
+> **staff-researcher level** — structured research, rigorous LaTeX
+> authoring, pitiless review, and the edit loop to keep all of it
+> tight.
 
-This README is the top-level index and maintenance playbook. The
-per-skill detail lives inside each skill directory.
+A personal, opinionated collection of distilled academic research
+workflows: the kind of patterns a senior collaborator brings to the
+table — pattern-matching failure modes, enforcing structural rigor,
+catching the thing you would have missed on your third read. Each
+skill in here is a workflow I've hit twice, captured once, and now
+reuse across papers, lectures, and projects.
+
+Every skill is format-compatible with **both Claude Code and Codex**.
+Clone once, symlink to the other tool's path, and both see the same
+source of truth.
+
+![license](https://img.shields.io/badge/license-MIT-blue)
+![tools](https://img.shields.io/badge/works_with-Claude_Code_%7C_Codex-purple)
+![format](https://img.shields.io/badge/format-SKILL.md-green)
 
 ---
 
-## Skills in this repo
+## ⚡ Quick start
 
-| Skill | One-line purpose |
-|-------|------------------|
-| [`enhancing-latex-lectures`](enhancing-latex-lectures/) | Enhance LaTeX lecture notes with visualizations, concrete examples, and pedagogical patterns from reference material. |
+```bash
+# 1. Clone the repo into Claude Code's skill root
+git clone https://github.com/shubham0704/claude-skills ~/.claude/skills
+
+# 2. Symlink for Codex (one source of truth, both tools see it)
+mkdir -p ~/.agents && ln -s ~/.claude/skills ~/.agents/skills
+```
+
+That's it. Start a new Claude Code or Codex session and the skills are
+live. Trigger them by asking for what they do — the model reads each
+skill's `description` field and picks up the right one automatically.
+
+```
+you: "run an RPI cycle on this codebase"            → /rpi-workflow
+you: "review this figure for label collisions"      → /tikz-figure-review
+you: "plan the structure for our new paper"         → /rigorous-paper-author
+you: "address these reviewer comments on our paper" → /refining-ml-papers
+```
+
+---
+
+## 🌟 Flagship: the RPI framework
+
+[`rpi-workflow`](rpi-workflow/) is the crown jewel. **Research →
+Plan → Implement** is a structured protocol for complex engineering
+and research tasks, with **Codex architectural peer review baked in**.
+Instead of jumping straight from a vague ask into a half-formed
+implementation, RPI forces the model to:
+
+1. **Research** — build a shared understanding of the problem,
+   surface the unknowns, identify the constraints.
+2. **Plan** — write the plan down as a concrete doc, then hand it to
+   Codex (or another model) for an adversarial architectural review.
+3. **Implement** — execute the approved plan with checkpoints, with
+   implementation reports committed back to `docs/`.
+
+All artifacts land under `docs/` in the project root as tracked
+Markdown, so future sessions (and humans) can pick up exactly where
+you left off. Trigger with `/rpi` or by asking for a research-plan-
+implement cycle.
+
+---
+
+## 📚 All skills in this repo
+
+| Skill | Purpose |
+|-------|---------|
+| ⭐ [`rpi-workflow`](rpi-workflow/) | **Research → Plan → Implement** workflow with Codex architectural peer review. Forces structured thinking before code and creates committed research/plan/report artifacts in `docs/`. |
+| [`rigorous-paper-author`](rigorous-paper-author/) | Draft mathematically rigorous LaTeX papers with claim graphs, notation ledgers, theorem discipline, and numerical-analysis rigor. |
+| [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | Deep 7-pass technical review of LaTeX papers (structure, notation, theorem/proof, numerics, complexity, figures, coherence) with a static Python verifier for automated triage. |
 | [`refining-ml-papers`](refining-ml-papers/) | Revise ML/scientific LaTeX papers based on reviewer or advisor feedback — structural reorganization, table instantiation, cross-file deduplication. |
-| [`rigorous-paper-author`](rigorous-paper-author/) | Draft mathematically rigorous LaTeX papers with claim graphs, notation ledgers, and theorem discipline. |
-| [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | Deep technical review of LaTeX papers in 7 ordered passes, with a static Python verifier for automated triage. |
-| [`rpi-workflow`](rpi-workflow/) | Research–Plan–Implement workflow with Codex peer review. |
-| [`tikz-figure-review`](tikz-figure-review/) | Review and fix alignment, label collision, clipping, and legend-over-data issues in TikZ/pgfplots figures. |
+| [`tikz-figure-review`](tikz-figure-review/) | Review and fix alignment, label collision, clipping, legend-over-data issues in TikZ/pgfplots figures. 11 failure modes + copy-paste snippet catalog. |
+| [`enhancing-latex-lectures`](enhancing-latex-lectures/) | Enhance LaTeX lecture notes with visualizations, concrete examples, and pedagogical patterns from reference material. |
 
-## External skills I use (installed separately)
+## 🤝 External skills I use (installed separately)
 
-These are skills I rely on but didn't write — clone or install them
-directly from their authors. They're listed here so my setup is
-reproducible and the original authors get credit.
+Skills I rely on but didn't write — clone or install them directly
+from their authors. Listed here so my setup is reproducible and the
+original authors get visible credit.
 
 | Skill | Author | Install | Purpose |
 |-------|--------|---------|---------|
 | `poster` ([posterskill](https://github.com/ethanweber/posterskill)) | [Ethan Weber](https://github.com/ethanweber) | `git clone git@github.com:ethanweber/posterskill.git ~/.claude/skills/poster` | Generate print-ready conference posters from your paper source + project website, with a live in-browser layout editor. |
 | `research-companion` ([repo](https://github.com/andrehuang/research-companion)) | [Andre Huang](https://github.com/andrehuang) | Claude Code plugin — install via marketplace | Strategic research thinking agents — idea critic, research strategist, enhanced brainstormer, structured brainstorming skill for research ideation (inspired by Carlini's research methodology). |
 
-If you install these alongside the ones in this repo, the same
-symlink (`~/.agents/skills → ~/.claude/skills`) makes everything
-visible to both Claude Code and Codex.
+The same symlink above (`~/.agents/skills → ~/.claude/skills`) makes
+all of these visible to both Claude Code and Codex if you install
+them alongside.
 
 ---
 
-## Installation
+## 🛠 Why both Claude Code and Codex?
 
-The skills in this repo use the shared `SKILL.md` + YAML-frontmatter
-format that works for **both Claude Code and OpenAI Codex** (the
-format is identical — only the discovery path differs). Clone once,
-symlink from the other tool's expected path:
+Both tools converged on the same skill format: a `SKILL.md` file with
+YAML frontmatter (`name` + `description`) and optional `references/`,
+`scripts/`, `assets/` subdirectories. The only difference is the
+discovery path:
 
-```bash
-# Clone into the Claude Code skill root:
-git clone https://github.com/<you>/claude-skills ~/.claude/skills
+- **Claude Code** scans `~/.claude/skills/`
+- **Codex** scans `~/.agents/skills/` (user-level) or
+  `$CWD/.agents/skills` (project-local)
 
-# Expose the same skills to Codex (symlink, no duplication):
-mkdir -p ~/.agents
-ln -s ~/.claude/skills ~/.agents/skills
-```
-
-Now `git pull` updates both tools at once. Claude Code scans
-`~/.claude/skills/`; Codex scans `~/.agents/skills/` (user-level) or
-`$CWD/.agents/skills` (project-local). See
+One clone + one symlink = both tools see the same source of truth
+with zero drift. See the
 [Anthropic skill docs](https://code.claude.com/docs/en/skills) and
 [Codex skill docs](https://developers.openai.com/codex/skills) for
 each tool's discovery rules.
 
-If you'd rather install the other direction (primary in `~/.agents/`,
-symlink to `~/.claude/skills`), either works — same result. Codex
-has one optional extra, `agents/openai.yaml` per skill, which is
-Codex-specific metadata (not in SKILL.md) — add it per-skill if you
-need tighter Codex integration.
-
-## How skills work
+## 🧠 How skills work (progressive disclosure)
 
 Skills are **model-invoked**: the model reads the `description` field
-in each skill's YAML frontmatter and triggers the relevant skill
-automatically based on your request. You don't need to name the skill
-explicitly — though you can, via `/<skill-name>` or by referencing it
-in prose.
+in each skill's frontmatter and triggers the right one automatically
+based on your request. You can also invoke explicitly with
+`/<skill-name>`.
 
-Progressive disclosure: metadata (name + description, ~100 words) is
-always in context. The full `SKILL.md` body loads only when the skill
-triggers. Files under `references/`, `scripts/`, and `assets/` load
-on-demand when the body points at them. Keep each `SKILL.md` under
-~500 lines and push overflow into bundled resources.
+Each skill loads in three layers so your context window doesn't
+bloat:
 
-For the canonical reference and the iterative improvement loop (eval
-pipeline, benchmarks, description optimization), see the Anthropic
+1. **Metadata** (name + description, ~100 words) — always in context
+2. **SKILL.md body** — loads only when the skill triggers (aim for
+   <500 lines)
+3. **Bundled resources** (`references/`, `scripts/`, `assets/`) —
+   load on-demand when the body points at them
+
+For the canonical reference and the full iterate-and-eval loop (test
+prompts, benchmarks, description optimization), see Anthropic's
 [skill-creator](https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md).
 
 ---
 
-## Updating skills — the maintenance playbook
+## 🔄 Maintenance playbook — how I keep skills from rotting
 
 Skills and sessions run at different tempos. A session produces raw
 material — corrections, edge cases, workflow refinements. A skill is
