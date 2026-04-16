@@ -62,6 +62,25 @@ tool's path, both see the same source of truth.
 
 ## ⚡ Quick start
 
+Two install paths depending on what you're running. Pick **A** if you
+live in Claude Code and want auto-update. Pick **B** if you also use
+Codex and want a single source of truth for both tools.
+
+### A. Claude Code marketplace (auto-updates on every session start)
+
+```
+/plugin marketplace add shubham0704/claude-skills
+/plugin install rpi-workflow@claude-skills
+/plugin install rigorous-paper-author@claude-skills
+/plugin install tikz-figure-review@claude-skills
+# ...etc, one per skill you want. See `/plugin` for the UI.
+```
+
+Claude Code refreshes the marketplace on every session start and keeps
+installed plugins at the latest version. Zero manual `git pull` ever.
+
+### B. Git clone + symlink (works with both Claude Code *and* Codex)
+
 ```bash
 # 1. Clone the repo into Claude Code's skill root
 git clone https://github.com/shubham0704/claude-skills ~/.claude/skills
@@ -70,9 +89,14 @@ git clone https://github.com/shubham0704/claude-skills ~/.claude/skills
 mkdir -p ~/.agents && ln -s ~/.claude/skills ~/.agents/skills
 ```
 
-That's it. Start a new Claude Code or Codex session and the skills are
-live. Trigger them by asking for what they do — the model reads each
-skill's `description` field and picks up the right one automatically.
+To get updates, `git -C ~/.claude/skills pull` (or set up a cron). The
+marketplace path (A) doesn't work for Codex because Codex doesn't
+recognize Claude Code's marketplace schema. Use B if you want the
+cross-tool story.
+
+**Either way**, the skills are live as soon as you start a new session.
+Trigger them by asking for what they do — the model reads each skill's
+`description` field and picks up the right one automatically.
 
 ---
 

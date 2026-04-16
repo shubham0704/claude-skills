@@ -1,0 +1,11 @@
+{
+  "name": "enhancing-latex-lectures",
+  "description": "Feynman-test partner for LaTeX lecture notes. Pattern-matches against pedagogical reference material (like Todorov's PDFs) and adds stunning visualizations, concrete-to-abstract progressions, and insight boxes. Making a concept teachable is how you discover whether you understand it well enough to write the paper.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/enhancing-latex-lectures",
+  "license": "MIT"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "tikz-figure-review",
+  "description": "Review and fix alignment, label collision, clipping, legend-over-data, and overlap issues in TikZ and pgfplots figures inside LaTeX documents.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/tikz-figure-review",
+  "license": "MIT"
+}

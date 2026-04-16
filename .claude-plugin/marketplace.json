@@ -1,0 +1,53 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-skills",
+  "description": "S-Tier Staff Researcher — skills that help you operate at staff-researcher level. Proper workflows for polishing raw ideas, expressing them rigorously, and implementing them properly. Covers RPI (Research→Plan→Implement with Codex peer review), rigorous LaTeX authoring and review, paper refinement, TikZ/pgfplots figure cleanup, and pedagogical lecture enhancement.",
+  "owner": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "plugins": [
+    {
+      "name": "rpi-workflow",
+      "description": "Research → Plan → Implement workflow with Codex architectural peer review. Research the codebase with parallel Explore agents, write a plan, get an adversarial review from Codex, then implement. All artifacts land in docs/. The engineering flagship — refuses to vibe-code.",
+      "source": "./rpi-workflow",
+      "category": "development",
+      "keywords": ["research", "planning", "codex", "peer-review", "architecture", "engineering"]
+    },
+    {
+      "name": "rigorous-paper-author",
+      "description": "Draft or revise a mathematically rigorous LaTeX paper for theory-heavy ML, scientific computing, numerical analysis, control, geometry, or applied mathematics. Enforces claim graphs, notation ledgers, theorem discipline, and numerical-analysis rigor before you write a sentence.",
+      "source": "./rigorous-paper-author",
+      "category": "productivity",
+      "keywords": ["latex", "academic-writing", "theorem-proving", "mathematical-rigor", "research"]
+    },
+    {
+      "name": "rigorous-paper-reviewer",
+      "description": "Deep 7-pass technical review of a LaTeX paper — structure, notation, theorem/proof, numerics, complexity, figures, coherence. Includes a static Python verifier for automated triage of labels, cross-references, and structure.",
+      "source": "./rigorous-paper-reviewer",
+      "category": "productivity",
+      "keywords": ["latex", "paper-review", "academic", "proof-verification", "mathematical-rigor"]
+    },
+    {
+      "name": "refining-ml-papers",
+      "description": "Revise ML/scientific LaTeX papers based on reviewer or advisor feedback. Structural reorganization, concrete instantiations of abstract tables, cross-file deduplication, compilation verification after every change.",
+      "source": "./refining-ml-papers",
+      "category": "productivity",
+      "keywords": ["latex", "paper-revision", "reviewer-comments", "academic-writing", "ml"]
+    },
+    {
+      "name": "enhancing-latex-lectures",
+      "description": "Feynman-test partner for lecture notes. Pattern-matches against exemplary pedagogical material (e.g. Todorov's PDFs) and adds stunning visualizations, concrete-to-abstract progressions, and insight boxes. Making a concept teachable is how you discover whether you understand it.",
+      "source": "./enhancing-latex-lectures",
+      "category": "productivity",
+      "keywords": ["latex", "teaching", "pedagogy", "visualization", "lecture-notes", "tikz"]
+    },
+    {
+      "name": "tikz-figure-review",
+      "description": "Review and fix alignment, label collision, clipping, legend-over-data, and overlap issues in TikZ/pgfplots figures inside LaTeX documents. Covers 11 failure modes with canonical fixes plus an extract-standalone iteration loop.",
+      "source": "./tikz-figure-review",
+      "category": "productivity",
+      "keywords": ["latex", "tikz", "pgfplots", "figure-review", "academic-writing"]
+    }
+  ]
+}

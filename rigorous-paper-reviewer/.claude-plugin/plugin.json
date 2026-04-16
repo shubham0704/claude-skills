@@ -1,0 +1,11 @@
+{
+  "name": "rigorous-paper-reviewer",
+  "description": "Deep 7-pass technical review of LaTeX papers — structure, notation, theorem/proof, numerics, complexity, figures, coherence. Includes a static Python verifier for automated triage of labels, cross-references, and structure.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/rigorous-paper-reviewer",
+  "license": "MIT"
+}

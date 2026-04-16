@@ -1,0 +1,11 @@
+{
+  "name": "refining-ml-papers",
+  "description": "Revise ML/scientific LaTeX papers based on reviewer or advisor feedback. Structural reorganization, concrete instantiations of abstract tables, cross-file deduplication, compilation verification.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/refining-ml-papers",
+  "license": "MIT"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "rigorous-paper-author",
+  "description": "Draft or revise mathematically rigorous LaTeX papers with claim graphs, notation ledgers, theorem discipline, and numerical-analysis rigor. Theory-heavy ML, scientific computing, numerical analysis, control, geometry, applied mathematics.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/rigorous-paper-author",
+  "license": "MIT"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "rpi-workflow",
+  "description": "Research-Plan-Implement workflow with Codex peer review. Research the codebase with parallel Explore agents, write a plan, get adversarial review from Codex, implement. Artifacts land in docs/.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/rpi-workflow",
+  "license": "MIT"
+}
