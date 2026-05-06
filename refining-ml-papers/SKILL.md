@@ -162,6 +162,39 @@ Appendix sections often accumulate dead code and robotic prose:
 3. **Add regime/group headers**: When listing many items back-to-back (e.g., 9 systems), group them with `\paragraph{}` headers and 1-2 connecting sentences
 4. **Fix float drift**: Appendix figures with `[h]` or `[t]` often drift into the bibliography → use `[H]` (requires `\usepackage{float}`)
 
+#### Pattern 9: Mechanism-Before-Claim Prose
+
+When body prose sounds like a slogan or summary card, rewrite it so the reader sees the mechanism before the claim.
+
+Watch for sentences like:
+- "This provides an interface for domain knowledge."
+- "This shows the model is interpretable."
+- "This is the main diagnostic lesson."
+- "The result demonstrates robustness."
+
+Replace them with the concrete chain:
+- **Modeling choice**: what component, constraint, chart, loss, or algorithm step changes?
+- **Failure mode**: what goes wrong without it?
+- **Isolating evidence**: which ablation, metric, figure, or table shows the effect?
+- **Scope**: what does the result not prove?
+
+Example:
+```latex
+% Weak
+Domain charts provide an interface for target manifolds.
+
+% Stronger
+If q lives on a constrained space Q, raw Euclidean coordinates make the
+constraint a learned behavior rather than a structural fact.  PHAST therefore
+uses a chart z = chi(q) before phase-state inference.  In predator--prey,
+the log-positive chart removes negative-population rollouts and improves
+H=100 error under observation noise without changing the rollout architecture.
+```
+
+Use contribution lists in the introduction when helpful, but avoid claim-map
+language in technical body paragraphs. Body paragraphs should teach the reader
+the mechanism, not recite the claim.
+
 ### Phase 4: Compilation & Verification
 
 **Always compile after changes.** The full verification workflow:
