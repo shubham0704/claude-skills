@@ -1,0 +1,11 @@
+{
+  "name": "animating-computational-mechanics",
+  "description": "Animate continuum mechanics, tensor calculus, and FEM concepts with Matplotlib, Manim, or Blender — pedagogical animations for lectures and papers. Distilled from Flaschel 2026 (Comp. Applic. in Engineering Education) plus the DrSimulate gallery.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/animating-computational-mechanics",
+  "license": "MIT"
+}

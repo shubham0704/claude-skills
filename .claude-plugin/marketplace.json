@@ -48,6 +48,13 @@
       "source": "./tikz-figure-review",
       "category": "productivity",
       "keywords": ["latex", "tikz", "pgfplots", "figure-review", "academic-writing"]
+    },
+    {
+      "name": "animating-computational-mechanics",
+      "description": "Animate continuum mechanics, tensor calculus, and FEM concepts — F on a unit circle, polar decomposition, Cauchy/PK1/PK2 tractions, weak form, mesh convergence — in Matplotlib, Manim, or Blender. Includes the ParaView → Stop-motion-OBJ → Blender pipeline. Distilled from Flaschel 2026 + the DrSimulate gallery.",
+      "source": "./animating-computational-mechanics",
+      "category": "productivity",
+      "keywords": ["mechanics", "fem", "animation", "matplotlib", "manim", "blender", "tensor-calculus", "continuum-mechanics"]
     }
   ]
 }
