@@ -15,6 +15,13 @@
       "keywords": ["research", "planning", "codex", "peer-review", "architecture", "engineering"]
     },
     {
+      "name": "plan-to-dag",
+      "description": "Convert large multistep plans into dependency-aware implementation DAGs with waves, parallel worksets, critical-path ownership, validation gates, and subagent prompt packs.",
+      "source": "./plan-to-dag",
+      "category": "development",
+      "keywords": ["planning", "dag", "task-graph", "subagents", "implementation", "dependencies", "parallelization"]
+    },
+    {
       "name": "rigorous-paper-author",
       "description": "Draft or revise a mathematically rigorous LaTeX paper for theory-heavy ML, scientific computing, numerical analysis, control, geometry, or applied mathematics. Enforces claim graphs, notation ledgers, theorem discipline, and numerical-analysis rigor before you write a sentence.",
       "source": "./rigorous-paper-author",

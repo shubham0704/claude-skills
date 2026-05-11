@@ -71,6 +71,7 @@ Codex and want a single source of truth for both tools.
 ```
 /plugin marketplace add shubham0704/claude-skills
 /plugin install rpi-workflow@claude-skills
+/plugin install plan-to-dag@claude-skills
 /plugin install rigorous-paper-author@claude-skills
 /plugin install tikz-figure-review@claude-skills
 # ...etc, one per skill you want. See `/plugin` for the UI.
@@ -112,6 +113,7 @@ Not sure where to begin? Match your situation to the first skill:
 | **Hardening a draft before submission** | [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | 7-pass adversarial read finds the cracks a sympathetic eye misses. |
 | **Reviewer comments just came back** | [`refining-ml-papers`](refining-ml-papers/) | Addresses comments without breaking the claim graph; surgical revisions. |
 | **Starting a complex engineering task** | [`rpi-workflow`](rpi-workflow/) | Research the codebase, plan the change, adversarially review the plan, *then* implement. No vibe-coding. |
+| **Breaking a large plan into parallel work** | [`plan-to-dag`](plan-to-dag/) | Converts roadmaps into dependency-aware DAGs with waves, validation gates, ownership boundaries, and subagent prompt packs. |
 | **One figure looks wrong** | [`tikz-figure-review`](tikz-figure-review/) | 11 documented failure modes + standalone iteration loop. |
 | **Paper accepted, conference coming up** | `poster` *(external)* | Turns paper source + website into shippable print-ready poster with a live in-browser editor. |
 
@@ -156,6 +158,7 @@ Research the codebase, plan the change, adversarially review the plan,
 | Skill | Your specialist | What they do |
 |---|---|---|
 | ⭐ [`rpi-workflow`](rpi-workflow/) | **Research Engineer / Tech Lead** *(with Codex on speed-dial)* | **Research → Plan → Implement** with Codex architectural peer review baked in. Never plans without understanding the codebase; always gets a second opinion before coding. Commits research/plan/feedback/impl/validation artifacts to `docs/`. This is the flagship — see the deep dive below. |
+| [`plan-to-dag`](plan-to-dag/) | **Execution Graph Architect** | Turns large implementation plans into dependency-aware DAGs: task nodes, waves, parallel worksets, critical-path ownership, validation gates, and subagent-ready prompts. |
 
 ---
 
@@ -185,6 +188,10 @@ skills consume, so a full cycle threads through multiple skills:
   parallel with Explore agents, write a `PLAN-<repo>-<task>.md`, run
   `codex exec` to get adversarial architectural feedback, iterate,
   implement, commit an `IMPL-<repo>-<task>.md` report.
+- **Plan → DAG (implementation to execution graph).** When a plan is
+  too large for one linear task list, `plan-to-dag` turns it into
+  waves, ownership boundaries, validation gates, and subagent prompts
+  before implementation starts.
 - **Implement → Express (experiments back to paper).** When the RPI
   implementation produces results, feed them back through
   `refining-ml-papers` (to update Table 1 with concrete

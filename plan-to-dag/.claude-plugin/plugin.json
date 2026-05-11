@@ -1,0 +1,11 @@
+{
+  "name": "plan-to-dag",
+  "description": "Convert large multistep plans into dependency-aware DAGs with execution waves, parallel worksets, validation gates, and subagent-ready prompts.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/plan-to-dag",
+  "license": "MIT"
+}
