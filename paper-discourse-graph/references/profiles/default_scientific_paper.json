@@ -1,0 +1,15 @@
+{
+  "name": "default_scientific_paper",
+  "central_question": "What should the reader understand, believe, and remember after this section?",
+  "audience": {
+    "primary": "technical paper readers",
+    "needs": [
+      "visible grounding before dense notation",
+      "nearby payoff after a planted question",
+      "clear handoffs between motivation, mechanism, evidence, and limits"
+    ]
+  },
+  "domain_terms": {},
+  "role_keywords": {},
+  "topic_checks": []
+}

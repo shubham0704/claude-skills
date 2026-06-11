@@ -1,0 +1,50 @@
+{
+  "name": "cphast",
+  "central_question": "If the physical parts are reusable but the deployed composition changes, what should the model keep fixed, what should it rebuild, and what should it expose to decision layers?",
+  "audience": {
+    "primary": "ML, robotics, power-systems, and scientific-modeling readers",
+    "needs": [
+      "visible physical scene before notation",
+      "domain-native wording for robotics, FHN, and microgrid examples",
+      "recall hooks before dense equations, tables, and figures",
+      "clear separation between reusable local physics, deployed interconnection, observations, and downstream action-card scoring"
+    ]
+  },
+  "domain_terms": {
+    "typed": "named physical variable, block, port, or consequence channel with declared meaning",
+    "chart": "coordinate or normalization map from raw observations into model-facing local coordinates",
+    "port": "power-carrying interface between stored energy and outside influence",
+    "PHASTCore": "the reusable local port-Hamiltonian update block",
+    "action card": "downstream objective-conditioned use of typed rollout factors, not the world-model output itself"
+  },
+  "role_keywords": {
+    "scene": ["robot", "microgrid", "FHN", "cell", "DGU", "line", "contact", "deployment"],
+    "mechanism": ["chart", "canonicalizer", "PHASTCore", "typed block", "interconnection", "port"],
+    "boundary": ["shadow mode", "logged", "q-only", "partial sensing", "fixed-layout", "scope"]
+  },
+  "topic_checks": [
+    {
+      "name": "Canonicalization / Local pH State Bridge Check",
+      "scope_heading_terms": [
+        "Local pH Coordinates Before PHASTCore",
+        "Mechanical canonicalization",
+        "Why this matters for composition",
+        "Canonicalization and rollout"
+      ],
+      "terms": ["canonical", "canonicalization", "canonicalizer", "Local pH Coordinates Before PHASTCore"],
+      "bridge_terms": ["specified next", "deferred", "q-only", "PHASTCore", "local pH state", "shared PHASTCore update"],
+      "detour_terms": ["separable", "decoupling theory", "symplectic", "canonical momentum"],
+      "answered_question": "Why do charted observations need a local pH state before PHASTCore?"
+    },
+    {
+      "name": "Typed Consequence / Action-Card Bridge Check",
+      "scope_heading_terms": [
+        "World-model physical critic interface"
+      ],
+      "terms": ["typed consequence", "typed factor", "action card", "downstream scoring"],
+      "bridge_terms": ["objective", "planner", "score", "downstream", "factor"],
+      "detour_terms": ["ledger", "opaque reward"],
+      "answered_question": "How do model-facing typed consequences become downstream decision-facing factors?"
+    }
+  ]
+}

@@ -111,6 +111,7 @@ Not sure where to begin? Match your situation to the first skill:
 | **Trying to prove you actually understand a concept** | [`enhancing-latex-lectures`](enhancing-latex-lectures/) | **Feynman test.** If you can't teach it with a stunning visualization, you haven't earned the right to claim it in a paper yet. |
 | **Drafting a theory-heavy paper from scratch** | [`rigorous-paper-author`](rigorous-paper-author/) | Enforces claim graphs, notation ledgers, and theorem discipline before you write a single sentence. |
 | **Hardening a draft before submission** | [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | 7-pass adversarial read finds the cracks a sympathetic eye misses. |
+| **A section feels hard to follow** | [`paper-discourse-graph`](paper-discourse-graph/) | Audits paragraphs as a reader-state graph: planted questions, payoffs, bridges, detours, and abrupt jumps. |
 | **Reviewer comments just came back** | [`refining-ml-papers`](refining-ml-papers/) | Addresses comments without breaking the claim graph; surgical revisions. |
 | **Starting a complex engineering task** | [`rpi-workflow`](rpi-workflow/) | Research the codebase, plan the change, adversarially review the plan, *then* implement. No vibe-coding. |
 | **Breaking a large plan into parallel work** | [`plan-to-dag`](plan-to-dag/) | Converts roadmaps into dependency-aware DAGs with waves, validation gates, ownership boundaries, and subagent prompt packs. |
@@ -145,6 +146,7 @@ don't understand it, and you go back to Polish.
 |---|---|---|
 | [`rigorous-paper-author`](rigorous-paper-author/) | **Theory-Paper Ghostwriter** | Draft mathematically rigorous LaTeX papers with claim graphs, notation ledgers, theorem discipline, and numerical-analysis rigor. |
 | [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | **PhD-Committee Reviewer** | 7-pass adversarial technical review (structure, notation, theorem/proof, numerics, complexity, figures, coherence) with a static Python verifier for automated triage. |
+| [`paper-discourse-graph`](paper-discourse-graph/) | **Reader-State Cartographer** | Turns a LaTeX section into a discourse graph so flow/readability passes can see planted questions, payoffs, detours, abrupt jumps, and unconnected evidence before editing. |
 | [`refining-ml-papers`](refining-ml-papers/) | **Revision Surgeon** | Revise ML/scientific LaTeX papers based on reviewer or advisor feedback — structural reorganization, table instantiation, cross-file deduplication. |
 | [`enhancing-latex-lectures`](enhancing-latex-lectures/) | **Feynman-Test Partner** | Pattern-matches against exemplary pedagogical material (e.g. Todorov's PDFs) and adds stunning visualizations, concrete-to-abstract progressions, insight boxes. **Making a concept teachable is how you discover whether you understand it well enough to write the paper.** |
 | [`tikz-figure-review`](tikz-figure-review/) | **Figure Layout Engineer** | Review and fix alignment, label collision, clipping, legend-over-data issues in TikZ/pgfplots figures. 11 failure modes + copy-paste snippet catalog. |
@@ -177,6 +179,12 @@ skills consume, so a full cycle threads through multiple skills:
   comments) and produces a revised version. `tikz-figure-review`
   fixes any figures flagged in the review. The whole loop converges
   on a camera-ready PDF.
+- **Express → Express (story-flow debugging).**
+  `paper-discourse-graph` sits between review and revision when a
+  section feels abrupt, dense, wasteful, or machine-generated. It
+  turns paragraphs, equations, figures, and tables into a reader-state
+  graph so the next edit targets the actual broken bridge instead of
+  polishing surface prose.
 - **Express → Polish (Feynman kickback).**
   `enhancing-latex-lectures` forces you to explain a concept simply
   with beautiful visualizations. If you stumble, you have a gap — go
@@ -307,6 +315,49 @@ the artifacts from the previous one. That's the chain.
 
 ---
 
+## 🧩 Discourse graph audits
+
+Use [`paper-discourse-graph`](paper-discourse-graph/) when a section's
+problem is not "is the theorem true?" but "why does this feel hard to
+follow?" It audits a LaTeX file as a graph of reader-state blocks:
+what each paragraph plants, what it pays off, where notation arrives
+too early, and which figures/equations are not connected to the active
+story.
+
+Agent invocation:
+
+```text
+Use paper-discourse-graph to audit section 3 for abrupt jumps,
+detours, and whether each paragraph plants or pays off a reader
+question. Do not edit yet.
+```
+
+CLI invocation from the skill directory:
+
+```bash
+python scripts/discourse_graph_audit.py paper/sec/3_method_arxiv.tex \
+  --section 3 \
+  --profile references/profiles/default_scientific_paper.json \
+  --out paper/docs/plans/discourse_graph_sec3.md \
+  --json-out paper/docs/plans/discourse_graph_sec3.json
+```
+
+For C-PHAST, use the bundled local-language profile:
+
+```bash
+python scripts/discourse_graph_audit.py paper/sec/3_method_arxiv.tex \
+  --section 3 \
+  --profile references/profiles/cphast.json \
+  --out paper/docs/plans/discourse_graph_sec3.md \
+  --json-out paper/docs/plans/discourse_graph_sec3.json
+```
+
+The output is triage, not a truth oracle. Treat labels like
+`abrupt`, `detour`, `unpaid_question`, and `premature_notation` as
+prompts for targeted human or agent review.
+
+---
+
 ## 🤝 Installing the external skills
 
 Two of the skills above are maintained by their authors, not in this
@@ -335,7 +386,8 @@ discovery path:
 
 - **Claude Code** scans `~/.claude/skills/`
 - **Codex** scans `~/.agents/skills/` (user-level) or
-  `$CWD/.agents/skills` (project-local)
+  `$CWD/.agents/skills` (project-local); some local Codex setups use
+  `~/.codex/skills/`
 
 One clone + one symlink = both tools see the same source of truth
 with zero drift. See the

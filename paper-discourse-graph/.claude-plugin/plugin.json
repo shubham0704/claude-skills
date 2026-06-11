@@ -1,0 +1,11 @@
+{
+  "name": "paper-discourse-graph",
+  "description": "Audit LaTeX papers as discourse graphs for reader-state continuity, paragraph flow, planted/payoff questions, detours, and figure/equation placement.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/paper-discourse-graph",
+  "license": "MIT"
+}

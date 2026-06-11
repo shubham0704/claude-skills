@@ -36,6 +36,13 @@
       "keywords": ["latex", "paper-review", "academic", "proof-verification", "mathematical-rigor"]
     },
     {
+      "name": "paper-discourse-graph",
+      "description": "Audit LaTeX papers as discourse graphs for reader-state continuity, paragraph flow, planted/payoff questions, detours, and figure/equation placement. Use before line editing sections that feel abrupt, wasteful, hard to parse, or machine-generated.",
+      "source": "./paper-discourse-graph",
+      "category": "productivity",
+      "keywords": ["latex", "paper-review", "readability", "discourse-graph", "academic-writing", "flow"]
+    },
+    {
       "name": "refining-ml-papers",
       "description": "Revise ML/scientific LaTeX papers based on reviewer or advisor feedback. Structural reorganization, concrete instantiations of abstract tables, cross-file deduplication, compilation verification after every change.",
       "source": "./refining-ml-papers",
