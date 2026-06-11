@@ -88,6 +88,45 @@ def render_topic_checks(nodes: list[Node], profile: Profile) -> list[str]:
     return lines
 
 
+def render_paragraph_tasks(nodes: list[Node], limit: int = 8) -> list[str]:
+    candidates = [
+        (idx, n)
+        for idx, n in enumerate(nodes)
+        if n.latex_kind == "paragraph_text" and (n.risk or n.question_planted or n.reader_question_answered)
+    ]
+    candidates.sort(key=lambda item: (-item[1].score, item[1].line_start, item[1].id))
+
+    lines: list[str] = ["## Paragraph Refinement Task List"]
+    if not candidates:
+        lines.append("No paragraph-sized refinement tasks were flagged by the current heuristics.")
+        lines.append("")
+        return lines
+
+    for task_no, (idx, node) in enumerate(candidates[:limit], start=1):
+        prev = nodes[idx - 1] if idx > 0 else None
+        nxt = nodes[idx + 1] if idx + 1 < len(nodes) else None
+        local_refs = sorted(set(node.refs + (prev.refs if prev else []) + (nxt.refs if nxt else [])))
+        risk = ", ".join(node.risk) if node.risk else "none"
+        goal = "Resolve the flagged flow/readability issue while preserving the paragraph's claim."
+        if node.question_planted:
+            goal = "Make the planted reader question explicit enough and ensure the payoff is nearby."
+        if node.reader_question_answered:
+            goal = "Make the paragraph's answer/payoff clear without adding claim drift."
+
+        lines.append(f"### Task P{task_no}: `{node.id}` lines {node.line_start}-{node.line_end}")
+        lines.append(f"- Goal: {goal}")
+        lines.append(f"- Paragraph job: `{node.kind}` under `{node.heading}`.")
+        lines.append(f"- Reader state before: {md_escape(prev.text_preview if prev else 'Start of section.')}")
+        lines.append(f"- Current paragraph: {md_escape(node.text_preview)}")
+        lines.append(f"- Next local payoff/handoff: {md_escape(nxt.text_preview if nxt else 'End of section.')}")
+        lines.append(f"- Risks to inspect: {md_escape(risk)}")
+        if local_refs:
+            lines.append(f"- Nearby refs to preserve: {', '.join(f'`{ref}`' for ref in local_refs[:8])}")
+        lines.append("- Deliverable: proposed rewrite plus one-sentence rationale; preserve labels, citations, and claim boundaries.")
+        lines.append("")
+    return lines
+
+
 def render_markdown(nodes: list[Node], edges: list[Edge], source: Path, section: str, profile: Profile) -> str:
     out_edges = outgoing_map(edges)
     lines: list[str] = []
@@ -126,6 +165,8 @@ def render_markdown(nodes: list[Node], edges: list[Edge], source: Path, section:
         )
     lines.append("")
 
+    lines.extend(render_paragraph_tasks(nodes))
+
     if profile.topic_checks:
         lines.extend(render_topic_checks(nodes, profile))
 
@@ -162,6 +203,17 @@ def render_markdown(nodes: list[Node], edges: list[Edge], source: Path, section:
     lines.append("- `premature_notation`: dense formal notation with many terms not seen earlier.")
     lines.append("- `weak_parent_link`: paragraph vocabulary has little overlap with the active heading.")
     lines.append("- `bridge_candidate`: local evidence that a suspected detour hands off to the next block.")
+    lines.append("- `semantic_comment`: source-only `% DG:` breadcrumb parsed as a graph node; it does not render in PDF.")
+    lines.append("- `context_debt`: a named setting/experiment/diagnostic appears before enough local setup.")
+    lines.append("- `appendix_claim_leak`: appendix evidence is used as if it were part of the current method story.")
+    lines.append("- `symbol_alias_confusion`: a similar symbol with a new subscript appears without explaining the relationship.")
+    lines.append("- `coarse_algorithm_reference`: prose invokes an algorithmic action without stage, line, or equation specificity.")
+    lines.append("- `missing_formal_setup`: equation-like block appears before prose creates the need for it.")
+    lines.append("- `missing_formal_payoff`: equation-like block is not followed by a nearby interpretation.")
+    lines.append("- `symbol_scope_debt`: formal block introduces several new symbols without nearby scope/type/dependency prose.")
+    lines.append("- `role_mismatch`: prose promises intuition or readability but hands off to dense notation without enough setup.")
+    lines.append("- `equation_overload`: formal block introduces many symbolic objects at once.")
+    lines.append("- `dangling_reference`: paragraph starts from this/these/such object without a clear local antecedent.")
     return "\n".join(lines) + "\n"
 
 

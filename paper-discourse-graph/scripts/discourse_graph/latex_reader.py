@@ -16,27 +16,31 @@ END_ENV_RE = re.compile(r"\\end\{(?P<env>[^}]+)\}")
 LABEL_RE = re.compile(r"\\label\{([^}]+)\}")
 REF_RE = re.compile(r"\\(?:eqref|ref|autoref|cref|Cref)\{([^}]+)\}")
 INPUT_RE = re.compile(r"\\input\{([^}]+)\}")
-LAYOUT_COMMAND_RE = re.compile(r"\\(?:begin\{document\}|end\{document\}|maketitle|tableofcontents|clearpage|newpage)\b")
+DG_COMMENT_RE = re.compile(r"^%\s*DG:\s*(?P<body>.*)$")
 
 
-def document_body_bounds(lines: list[str]) -> tuple[int, int]:
-    """Return line-index bounds for the document body, preserving line numbers."""
-    start = 0
-    end = len(lines)
-    for idx, line in enumerate(lines):
-        if r"\begin{document}" in line:
-            start = idx + 1
-            break
-    for idx in range(start, len(lines)):
-        if r"\end{document}" in lines[idx]:
-            end = idx
-            break
-    return start, end
+def semantic_comment_role(body: str) -> str:
+    role_match = re.search(r"\brole\s*=\s*\"?(?P<role>[A-Za-z_-]+)\"?", body)
+    if not role_match:
+        return "handoff"
+    role = role_match.group("role").lower()
+    return {
+        "setup": "scene",
+        "plant": "question",
+        "question": "question",
+        "bridge": "mechanism",
+        "definition": "definition",
+        "notation": "notation",
+        "payoff": "payoff",
+        "interpretation": "payoff",
+        "boundary": "boundary",
+        "evidence": "evidence",
+        "handoff": "handoff",
+    }.get(role, "handoff")
 
 
 def split_latex_nodes(source: str, section: str, profile: Profile) -> list[Node]:
     lines = source.splitlines()
-    start_idx, end_idx = document_body_bounds(lines)
     nodes: list[Node] = []
     section_path: list[str] = []
     block_path: list[str] = []
@@ -76,11 +80,34 @@ def split_latex_nodes(source: str, section: str, profile: Profile) -> list[Node]
             )
         )
 
-    i = start_idx
-    while i < end_idx:
+    i = 0
+    while i < len(lines):
         line_no = i + 1
         line = lines[i]
         stripped = line.strip()
+
+        dg_comment = DG_COMMENT_RE.match(stripped)
+        if dg_comment:
+            flush_paragraph()
+            body = dg_comment.group("body").strip()
+            nodes.append(
+                Node(
+                    id=make_id("blk"),
+                    kind=semantic_comment_role(body),
+                    latex_kind="semantic_comment",
+                    heading=current_heading,
+                    section_path=list(section_path),
+                    text=body,
+                    text_preview=first_sentence(body) or body[:160],
+                    line_start=line_no,
+                    line_end=line_no,
+                    labels=LABEL_RE.findall(body),
+                    refs=REF_RE.findall(body),
+                    inputs=INPUT_RE.findall(body),
+                )
+            )
+            i += 1
+            continue
 
         if not stripped or stripped.startswith("%"):
             flush_paragraph()
@@ -94,7 +121,7 @@ def split_latex_nodes(source: str, section: str, profile: Profile) -> list[Node]
             block = [line]
             start = line_no
             i += 1
-            while i < end_idx:
+            while i < len(lines):
                 block.append(lines[i])
                 end = END_ENV_RE.search(lines[i])
                 if end and env == end.group("env").rstrip("*"):
@@ -189,7 +216,7 @@ def split_latex_nodes(source: str, section: str, profile: Profile) -> list[Node]
             i += 1
             continue
 
-        if LABEL_RE.fullmatch(stripped) or LAYOUT_COMMAND_RE.fullmatch(stripped) or stripped in {r"\medskip", r"\noindent"}:
+        if LABEL_RE.fullmatch(stripped) or stripped in {r"\medskip", r"\noindent"}:
             i += 1
             continue
 

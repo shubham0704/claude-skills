@@ -46,5 +46,34 @@
       "detour_terms": ["ledger", "opaque reward"],
       "answered_question": "How do model-facing typed consequences become downstream decision-facing factors?"
     }
-  ]
+  ],
+  "risk_rules": {
+    "equation_overload_symbol_threshold": 18,
+    "symbol_scope_new_threshold": 8,
+    "confusable_symbol_bases": [
+      "A",
+      "Cmat",
+      "Dmat",
+      "G",
+      "Ham",
+      "M",
+      "Mmat",
+      "Phi",
+      "Pi",
+      "Rmat"
+    ],
+    "setting_terms": [
+      "Go2",
+      "Go2 push",
+      "lateral-push",
+      "Isaac Lab",
+      "Spot",
+      "FHN",
+      "microgrid",
+      "partial-flag",
+      "physical-critic",
+      "safety critic",
+      "damping-spectrum"
+    ]
+  }
 }

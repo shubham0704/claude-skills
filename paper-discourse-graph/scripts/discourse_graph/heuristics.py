@@ -15,6 +15,97 @@ CITE_RE = re.compile(r"\\cite\w*\{[^}]+\}")
 COMMAND_RE = re.compile(r"\\[a-zA-Z]+(?:\[[^\]]*\])?(?:\{[^{}]*\})?")
 INLINE_MATH_RE = re.compile(r"\$([^$]+)\$")
 WORD_RE = re.compile(r"[A-Za-z][A-Za-z0-9_-]*")
+SYMBOL_RE = re.compile(r"\\(?P<base>[A-Za-z]+)(?:_\{(?P<braced>[^{}]*(?:\{[^{}]*\}[^{}]*)*)\}|_(?P<plain>[A-Za-z0-9]+))?")
+APPENDIX_EVIDENCE_RE = re.compile(
+    r"\bappendix\b.*\b(uses|reports|shows|evaluates|demonstrates|validates|confirms|proves)\b",
+    re.IGNORECASE,
+)
+ALGORITHM_ACTION_RE = re.compile(
+    r"\balgorithm\b.*\b(instantiates?|parses?|calls?|reads?|applies?|wraps?|starts?|executes?|assembles?)\b",
+    re.IGNORECASE,
+)
+ALGORITHM_SPECIFICITY_RE = re.compile(r"\b(lines?|stages?|steps?|eq\.|equation|line\s+\d+)\b", re.IGNORECASE)
+SETTING_CONTEXT_RE = re.compile(r"\b(experiment|study|setting|benchmark|diagnostic|sweep|specialization)\b", re.IGNORECASE)
+SYMBOL_RELATION_RE = re.compile(
+    r"\b(not|rather than|while|whereas|distinct|same|denotes|appears in|used only|only by|proxy|metric|shorthand)\b",
+    re.IGNORECASE,
+)
+FORMAL_BLOCK_KINDS = {"equation", "align", "gather", "multline"}
+FORMAL_SETUP_RE = re.compile(
+    r"\b(define|denote|write|let|model|use|given|resulting|following|becomes|yields|"
+    r"transition|loss|objective|score|readout|constraint|factor|operator|map|update|"
+    r"identity|evaluate|evaluates|compute|computes|match|matches|penalty|term|"
+    r"parameteri[sz]e|parameteri[sz]ed|we obtain|we have)\b",
+    re.IGNORECASE,
+)
+FORMAL_PAYOFF_RE = re.compile(
+    r"\b(where|here|this|these|therefore|thus|means|corresponds|in words|intuitively|"
+    r"operationally|the key|we use|reads|captures|ensures|guarantees|prevents|allows|"
+    r"gives|implies|reduces|rolls|rollout|evaluates|computes|matches|supervised|"
+    r"so|because)\b",
+    re.IGNORECASE,
+)
+SCOPE_EXPLANATION_RE = re.compile(
+    r"\b(where|with|denotes|defined|lives|belongs|maps|from|to|over|for each|"
+    r"local|global|target|fixed|optional|zero when|absent|dimension|scope|type)\b",
+    re.IGNORECASE,
+)
+INTUITION_PROMISE_RE = re.compile(
+    r"\b(intuition|intuitive|conceptually|in words|simple|visible|readability|picture)\b",
+    re.IGNORECASE,
+)
+DANGLING_REFERENCE_RE = re.compile(
+    r"^\s*(this|these|that|such)\s+"
+    r"(?P<noun>factor|map|setting|spectrum|operator|diagnostic|channel|mode|interface|"
+    r"contract|term|quantity|score|rule|transition|wrapper|pipeline|vector|matrix|"
+    r"table|figure|claim|object)s?\b",
+    re.IGNORECASE,
+)
+LATEX_SYMBOL_IGNORE = {
+    "begin",
+    "end",
+    "label",
+    "ref",
+    "eqref",
+    "autoref",
+    "cref",
+    "Cref",
+    "cite",
+    "citet",
+    "citep",
+    "frac",
+    "tfrac",
+    "dfrac",
+    "left",
+    "right",
+    "big",
+    "Big",
+    "bigl",
+    "bigr",
+    "Bigl",
+    "Bigr",
+    "mathrm",
+    "mathbf",
+    "mathcal",
+    "mathbb",
+    "text",
+    "operatorname",
+    "top",
+    "T",
+    "qquad",
+    "quad",
+    "ldots",
+    "cdots",
+    "times",
+    "le",
+    "ge",
+    "leq",
+    "geq",
+    "in",
+    "to",
+    "circ",
+    "colon",
+}
 
 
 STOPWORDS = {
@@ -102,6 +193,127 @@ def first_sentence(text: str, limit: int = 160) -> str:
 
 def words(text: str) -> set[str]:
     return {w.lower() for w in WORD_RE.findall(strip_latex(text)) if len(w) > 2 and w.lower() not in STOPWORDS}
+
+
+def configured_values(profile: Profile, key: str) -> tuple[str, ...]:
+    values = profile.risk_rules.get(key, []) if isinstance(profile.risk_rules, dict) else []
+    return tuple(str(v) for v in values)
+
+
+def configured_terms(profile: Profile, key: str) -> tuple[str, ...]:
+    return tuple(v.lower() for v in configured_values(profile, key))
+
+
+def configured_int(profile: Profile, key: str, default: int) -> int:
+    value = profile.risk_rules.get(key, default) if isinstance(profile.risk_rules, dict) else default
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def setting_terms(profile: Profile) -> tuple[str, ...]:
+    return configured_terms(profile, "setting_terms")
+
+
+def confusable_symbol_bases(profile: Profile) -> set[str]:
+    return set(configured_values(profile, "confusable_symbol_bases"))
+
+
+def node_setting_terms(node: Node, profile: Profile) -> set[str]:
+    haystack = f"{node.heading} {strip_latex(node.text)}".lower()
+    return {term for term in setting_terms(profile) if term and term in haystack}
+
+
+def normalize_symbol_subscript(raw: str) -> str:
+    clean = re.sub(r"\\[A-Za-z]+", "", raw)
+    clean = re.sub(r"[^A-Za-z0-9]+", "", clean)
+    return clean
+
+
+def symbol_signatures(text: str, profile: Profile) -> list[tuple[str, str]]:
+    tracked_bases = confusable_symbol_bases(profile)
+    if not tracked_bases:
+        return []
+
+    signatures: list[tuple[str, str]] = []
+    for match in SYMBOL_RE.finditer(text):
+        base = match.group("base")
+        raw_sub = match.group("braced") or match.group("plain") or ""
+        if not raw_sub:
+            continue
+        if base not in tracked_bases:
+            continue
+        sub = normalize_symbol_subscript(raw_sub)
+        if sub:
+            signatures.append((base, sub))
+    return signatures
+
+
+def symbol_relationship_explained(text: str) -> bool:
+    return bool(SYMBOL_RELATION_RE.search(strip_latex(text)))
+
+
+def is_formal_block(node: Node) -> bool:
+    return node.latex_kind in FORMAL_BLOCK_KINDS
+
+
+def has_formal_setup(prev: Node | None, node: Node) -> bool:
+    if prev is None:
+        return False
+    if is_formal_block(prev):
+        return True
+    if prev.latex_kind != "paragraph_text":
+        return False
+    clean = strip_latex(prev.text)
+    return bool(FORMAL_SETUP_RE.search(clean)) or clean.rstrip().endswith(":") or lexical_overlap(prev, node) >= 0.04
+
+
+def has_formal_payoff(node: Node, nxt: Node | None) -> bool:
+    if nxt is None:
+        return False
+    if is_formal_block(nxt):
+        return True
+    if nxt.latex_kind != "paragraph_text":
+        return False
+    clean = strip_latex(nxt.text)
+    return bool(FORMAL_PAYOFF_RE.search(clean)) or lexical_overlap(node, nxt) >= 0.04
+
+
+def math_source_without_latex_commands(text: str) -> str:
+    text = re.sub(r"\\(?:begin|end|label|ref|eqref|autoref|cref|Cref)\{[^}]*\}", " ", text)
+    text = re.sub(r"\\[A-Za-z]+", " ", text)
+    text = re.sub(r"[^A-Za-z0-9_]+", " ", text)
+    return text
+
+
+def formal_symbol_tokens(text: str) -> set[str]:
+    tokens: set[str] = set()
+    for match in SYMBOL_RE.finditer(text):
+        base = match.group("base")
+        if base in LATEX_SYMBOL_IGNORE:
+            continue
+        raw_sub = match.group("braced") or match.group("plain") or ""
+        sub = normalize_symbol_subscript(raw_sub)
+        tokens.add(f"{base}_{sub}" if sub else base)
+
+    bare_source = math_source_without_latex_commands(text)
+    for raw in re.findall(r"\b[A-Za-z][A-Za-z0-9_]*\b", bare_source):
+        if raw in LATEX_SYMBOL_IGNORE or raw.startswith(("eq", "fig", "tab", "alg", "sec")):
+            continue
+        if len(raw) == 1 or "_" in raw or raw[:1].isupper():
+            tokens.add(raw)
+    return tokens
+
+
+def has_symbol_scope_explanation(prev: Node | None, nxt: Node | None) -> bool:
+    surrounding = " ".join(strip_latex(n.text) for n in (prev, nxt) if n and n.latex_kind == "paragraph_text")
+    return bool(SCOPE_EXPLANATION_RE.search(surrounding))
+
+
+def has_clear_antecedent(nodes: list[Node], idx: int, noun: str) -> bool:
+    window = " ".join(strip_latex(n.text).lower() for n in nodes[max(0, idx - 3) : idx])
+    return noun.lower() in window
 
 
 def math_density(text: str) -> int:
@@ -217,8 +429,14 @@ def add_risk(node: Node, label: str) -> None:
 
 def annotate_nodes(nodes: list[Node], profile: Profile) -> None:
     prior_words: set[str] = set()
+    seen_settings: set[str] = set()
+    symbol_history: dict[str, set[str]] = {}
+    seen_formal_symbols: set[str] = set()
+    overload_threshold = configured_int(profile, "equation_overload_symbol_threshold", 16)
+    scope_threshold = configured_int(profile, "symbol_scope_new_threshold", 7)
     open_questions: list[tuple[int, Node]] = []
     for idx, node in enumerate(nodes):
+        nxt = nodes[idx + 1] if idx + 1 < len(nodes) else None
         node.question_planted = question_planted(node)
         node.reader_question_answered = question_answered(node, profile)
         if node.question_planted:
@@ -243,6 +461,10 @@ def annotate_nodes(nodes: list[Node], profile: Profile) -> None:
             if overlap < 0.08 and (starts_abrupt or follows_block_without_bridge):
                 add_risk(node, "abrupt")
 
+            dangling = DANGLING_REFERENCE_RE.search(strip_latex(node.text))
+            if dangling and overlap < 0.08 and not has_clear_antecedent(nodes, idx, dangling.group("noun")):
+                add_risk(node, "dangling_reference")
+
         for check in profile.topic_checks:
             if topic_matches(check, node.heading, node.text):
                 if (
@@ -257,6 +479,48 @@ def annotate_nodes(nodes: list[Node], profile: Profile) -> None:
         low = strip_latex(node.text).lower()
         if "appendix" in low and "main text" not in low and node.kind != "handoff":
             add_risk(node, "detour")
+        if APPENDIX_EVIDENCE_RE.search(low):
+            add_risk(node, "appendix_claim_leak")
+        if ALGORITHM_ACTION_RE.search(low) and not ALGORITHM_SPECIFICITY_RE.search(low):
+            add_risk(node, "coarse_algorithm_reference")
+
+        current_settings = node_setting_terms(node, profile)
+        if current_settings:
+            first_mentions = current_settings - seen_settings
+            if first_mentions and SETTING_CONTEXT_RE.search(low):
+                add_risk(node, "context_debt")
+            seen_settings |= current_settings
+
+        current_symbols = symbol_signatures(node.text, profile)
+        for base, sub in current_symbols:
+            prior_subs = symbol_history.setdefault(base, set())
+            relationship_context = " ".join(
+                n.text for n in (prev, node, nxt) if n and n.latex_kind in {"paragraph_text", *FORMAL_BLOCK_KINDS}
+            )
+            if prior_subs and sub not in prior_subs and not symbol_relationship_explained(relationship_context):
+                add_risk(node, "symbol_alias_confusion")
+            prior_subs.add(sub)
+
+        if is_formal_block(node):
+            formal_symbols = formal_symbol_tokens(node.text)
+            new_symbols = formal_symbols - seen_formal_symbols
+            if not has_formal_setup(prev, node):
+                add_risk(node, "missing_formal_setup")
+            if not has_formal_payoff(node, nxt):
+                add_risk(node, "missing_formal_payoff")
+            if len(formal_symbols) >= overload_threshold:
+                add_risk(node, "equation_overload")
+            if len(new_symbols) >= scope_threshold and not has_symbol_scope_explanation(prev, nxt):
+                add_risk(node, "symbol_scope_debt")
+            if (
+                prev
+                and prev.latex_kind == "paragraph_text"
+                and INTUITION_PROMISE_RE.search(strip_latex(prev.text))
+                and not FORMAL_SETUP_RE.search(strip_latex(prev.text))
+                and len(formal_symbols) >= max(5, overload_threshold // 2)
+            ):
+                add_risk(node, "role_mismatch")
+            seen_formal_symbols |= formal_symbols
 
         prior_words |= words(node.text)
 
@@ -280,6 +544,16 @@ def risk_score(node: Node) -> int:
         "justification_heavy": 2,
         "bridge_candidate": -1,
         "unconnected_evidence": 3,
+        "context_debt": 4,
+        "appendix_claim_leak": 4,
+        "symbol_alias_confusion": 4,
+        "coarse_algorithm_reference": 3,
+        "missing_formal_setup": 4,
+        "missing_formal_payoff": 4,
+        "symbol_scope_debt": 4,
+        "role_mismatch": 3,
+        "equation_overload": 3,
+        "dangling_reference": 3,
     }
     return sum(weights.get(r, 1) for r in node.risk)
 
@@ -294,7 +568,16 @@ def build_edges(nodes: list[Node]) -> list[Edge]:
     for prev, cur in zip(nodes, nodes[1:]):
         edge_type = "hands_off_to"
         confidence = 0.55
-        if cur.kind in {"definition", "notation"} and prev.kind in {"scene", "claim", "question", "mechanism"}:
+        if is_formal_block(cur) and prev.latex_kind == "paragraph_text":
+            edge_type = "sets_up_formal_block"
+            confidence = 0.68
+        elif is_formal_block(prev) and cur.latex_kind == "paragraph_text":
+            edge_type = "interprets_formal_block"
+            confidence = 0.68
+        elif is_formal_block(prev) and is_formal_block(cur):
+            edge_type = "continues_formal_block"
+            confidence = 0.6
+        elif cur.kind in {"definition", "notation"} and prev.kind in {"scene", "claim", "question", "mechanism"}:
             edge_type = "formalizes"
             confidence = 0.65
         elif cur.kind == "justification":
@@ -303,7 +586,11 @@ def build_edges(nodes: list[Node]) -> list[Edge]:
         elif cur.kind == "evidence":
             edge_type = "supports_with_evidence"
             confidence = 0.6
-        if lexical_overlap(prev, cur) < 0.05 and cur.latex_kind == "paragraph_text":
+        if (
+            edge_type not in {"interprets_formal_block", "sets_up_formal_block", "continues_formal_block"}
+            and lexical_overlap(prev, cur) < 0.05
+            and cur.latex_kind == "paragraph_text"
+        ):
             edge_type = "interrupts"
             confidence = 0.45
         edges.append(Edge(prev.id, cur.id, edge_type, confidence))

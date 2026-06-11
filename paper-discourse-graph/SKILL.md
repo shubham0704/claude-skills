@@ -2,7 +2,7 @@
 name: paper-discourse-graph
 description: "Audit LaTeX papers as discourse graphs when paragraph flow, story continuity, readability, reader-state breadcrumbs, payoff chains, or figure/equation placement matter. Use when the user asks whether a section feels abrupt, wasteful, machine-generated, monotonous, hard to parse, or wants to zoom in/out across paragraphs before editing."
 metadata:
-  version: 0.1.0
+  version: 0.1.4
 ---
 
 # Paper Discourse Graph
@@ -37,6 +37,16 @@ Use the most specific available profile:
 Profiles define the central reader question, audience needs, domain
 terms, and topic checks. Keep project taste in profiles, not in the
 engine.
+
+For methods, theory, or appendix sections where paragraphs hand off to
+notation and equations, also read
+`references/formal_block_flow.md`.
+When authoring or revising source files and the user wants durable
+machine-readable breadcrumbs for later passes, read
+`references/source_semantic_comments.md`.
+For late-stage paragraph-by-paragraph refinement, task breakdowns for
+fresh agents, or requests to zoom into each paragraph with a fresh
+mind, read `references/paragraph_refinement_tasks.md`.
 
 ### 1.3 Run the CLI
 
@@ -85,6 +95,8 @@ Important node roles:
 - `boundary`: scope limit or condition
 - `payoff`: answer to earlier setup
 - `handoff`: transition to the next object
+- `semantic_comment`: source-only `% DG:` breadcrumb used to record
+  author intent without rendering in the PDF
 
 Important risk labels:
 - `abrupt`: weak continuity into the current block
@@ -94,6 +106,26 @@ Important risk labels:
 - `weak_parent_link`: paragraph is weakly tied to its heading
 - `bridge_candidate`: possible bridge that may rescue a detour
 - `unconnected_evidence`: figure/table/algorithm not clearly recalled
+- `context_debt`: named setting or experiment appears before enough
+  local setup
+- `appendix_claim_leak`: appendix-only evidence is doing main-text
+  argumentative work
+- `symbol_alias_confusion`: profile-tracked symbols gain a new
+  subscript or variant without explaining the relationship
+- `coarse_algorithm_reference`: algorithm behavior is described
+  without line, stage, equation, or step anchors
+- `missing_formal_setup`: equation-like block appears before prose
+  creates the need for it
+- `missing_formal_payoff`: equation-like block is not followed by a
+  nearby interpretation
+- `symbol_scope_debt`: formal block introduces several new symbols
+  without nearby scope, type, or dependency prose
+- `role_mismatch`: prose promises intuition or readability but hands
+  off to dense notation without enough setup
+- `equation_overload`: formal block introduces many symbolic objects
+  at once
+- `dangling_reference`: paragraph starts from this/these/such object
+  without a clear local antecedent
 
 ## 2. Review Taste
 
@@ -104,6 +136,8 @@ For each paragraph or block, ask:
 - Is the payoff close enough, or is the reader carrying too much load?
 - Is this block story-bearing, justification-bearing, evidence-bearing,
   implementation-bearing, or boundary-bearing?
+- If this became a task for a fresh agent, what local context,
+  invariants, and claim boundaries would that task need?
 
 Prefer a chain where understanding progressively accumulates:
 visible scene -> reader question -> mechanism -> formal object ->
@@ -112,6 +146,11 @@ evidence -> payoff -> next question.
 Use visible language before formal terms. A dense equation should feel
 inevitable because the previous paragraph made the need for that
 object obvious.
+
+For formal blocks, check the local loop:
+paragraph motivates need -> notation names object -> equation commits
+to definition/update/loss/constraint/readout -> paragraph interprets
+what changed for the reader.
 
 ## 3. Output Format
 
@@ -137,6 +176,12 @@ changes and ask which ones to land.
 - `scripts/discourse_graph_audit.py`: command-line entry point
 - `scripts/discourse_graph/`: dependency-free LaTeX segmentation,
   heuristics, schema, and rendering code
+- `references/formal_block_flow.md`: detailed rubric for paragraphs,
+  notation, equations, interpretation, and consistency
+- `references/paragraph_refinement_tasks.md`: late-stage per-paragraph
+  task protocol for fresh review passes
+- `references/source_semantic_comments.md`: optional `% DG:` comment
+  convention for source-level discourse breadcrumbs
 - `references/profiles/default_scientific_paper.json`: general profile
 - `references/profiles/cphast.json`: C-PHAST profile with typed
   factors, charts, ports, PHASTCore, and action-card checks
@@ -149,3 +194,5 @@ changes and ask which ones to land.
   decide whether they belong later, in an appendix, or in a tighter
   boundary sentence.
 - Do not let profile-specific vocabulary leak into unrelated papers.
+- Keep paper-specific notation families in the profile, for example
+  `risk_rules.confusable_symbol_bases`, not in the reusable engine.

@@ -11,5 +11,9 @@
   },
   "domain_terms": {},
   "role_keywords": {},
-  "topic_checks": []
+  "topic_checks": [],
+  "risk_rules": {
+    "equation_overload_symbol_threshold": 16,
+    "symbol_scope_new_threshold": 7
+  }
 }

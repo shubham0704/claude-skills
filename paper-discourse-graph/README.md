@@ -11,7 +11,13 @@ It helps answer questions like:
   boundary material?
 
 It is useful before line editing a section for flow, readability,
-compression, rhythm, or story coherence.
+compression, rhythm, or story coherence. For methods and theory
+sections, it also checks whether prose properly sets up notation and
+equations, and whether formal blocks receive nearby interpretation.
+It can also read optional `% DG:` source comments as semantic
+breadcrumbs that do not render in the PDF.
+For late-stage polish, it can emit paragraph-sized review tasks that
+give a fresh agent the local context, invariants, and claim boundaries.
 
 ## Agent Invocation
 
@@ -76,6 +82,20 @@ The Markdown report includes:
 - node table with planted/answered reader questions
 - risk labels such as `abrupt`, `detour`, `unpaid_question`, and
   `premature_notation`
+- context and reference warnings such as `context_debt`,
+  `appendix_claim_leak`, `symbol_alias_confusion`, and
+  `coarse_algorithm_reference`
+- formal-block warnings such as `missing_formal_setup`,
+  `missing_formal_payoff`, `symbol_scope_debt`, `role_mismatch`,
+  `equation_overload`, and `dangling_reference`
+
+Paper-specific notation checks belong in the profile, not in the
+engine. For example, C-PHAST declares its tracked symbol families under
+`risk_rules.confusable_symbol_bases`.
+Source-level breadcrumbs use `% DG:` comments and are documented in
+`references/source_semantic_comments.md`.
+Paragraph-sized task design is documented in
+`references/paragraph_refinement_tasks.md`.
 
 The JSON report preserves the same graph for downstream tooling.
 
