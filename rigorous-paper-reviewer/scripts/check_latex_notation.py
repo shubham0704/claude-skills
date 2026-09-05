@@ -58,7 +58,7 @@ STYLE_COMMANDS = {"mathcal", "mathscr", "mathbb", "mathbf", "boldsymbol", "maths
 PRESERVE_DECORATORS = {"hat", "widehat", "tilde", "widetilde", "bar", "overline"}
 DROP_DECORATORS = {"dot", "ddot", "vec"}
 SKIP_GROUP_COMMANDS = {
-    "text", "textrm", "textsf", "texttt", "textbf", "textit", "mbox",
+    "text", "textrm", "textsf", "texttt", "textbf", "textit", "mathrm", "mbox",
     "operatorname", "label", "tag", "ref", "eqref", "autoref", "cref",
     "Cref", "cite", "citep", "citet", "color", "url", "href", "phantom",
     "begin", "end",
@@ -636,13 +636,18 @@ def audit(target: Path, scope: str = "main", registry_path: Path | None = None) 
             "meaning": registry_entry.get("meaning"),
         }
 
-        if first_declaration is None:
+        if first_declaration is None and not registry_explained:
             result.issues.append(Issue(
                 "WARNING", "N001", symbol,
                 f"{symbol} is used but no formal declaration or nearby prose explanation was detected.",
                 first.path, first.line, first.unit_title,
             ))
-        elif first.position < first_declaration.position and first.unit_id != first_declaration.unit_id:
+        elif (
+            first_declaration is not None
+            and first.position < first_declaration.position
+            and first.unit_id != first_declaration.unit_id
+            and not registry_explained
+        ):
             result.issues.append(Issue(
                 "ERROR", "N002", symbol,
                 f"{symbol} is first used in '{first.unit_title}' but first declared/explained in '{first_declaration.unit_title}'.",

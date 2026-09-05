@@ -138,6 +138,42 @@ Y_{t+1}\sim O(\cdot\mid Y_t).
         issues = [issue for issue in result.issues if issue.symbol == "O"]
         self.assertTrue(any(issue.code == "N006" for issue in issues))
 
+    def test_registry_first_use_terms_count_as_an_explanation(self):
+        result = self.audit(
+            r"""
+\documentclass{beamer}
+\begin{document}
+\begin{frame}{Prediction}
+The latent state estimate uses $z_t$.
+\end{frame}
+\begin{frame}{Notation}
+Here $z_t$ denotes the hidden state.
+\end{frame}
+\end{document}
+""",
+            registry={
+                "symbols": {
+                    "z": {
+                        "meaning": "latent state",
+                        "terms": ["latent state"],
+                        "roles": ["value"],
+                    }
+                }
+            },
+        )
+        issues = [issue for issue in result.issues if issue.symbol == "z"]
+        self.assertFalse(any(issue.code in {"N001", "N002", "N006"} for issue in issues), result.to_dict())
+
+    def test_upright_operator_words_do_not_become_symbols(self):
+        result = self.audit(r"""
+\documentclass{article}
+\begin{document}
+The error metric is $\mathrm{MAE}=0.2$.
+\end{document}
+""")
+        self.assertNotIn("A", result.symbols)
+        self.assertNotIn("E", result.symbols)
+
     def test_unbraced_math_style_is_preserved(self):
         result = self.audit(r"""
 \documentclass{article}

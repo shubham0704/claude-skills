@@ -65,6 +65,9 @@ checks without teaching the parser domain semantics:
 
 Registry keys use the notation as written in math mode. `terms` are
 case-insensitive phrases that must occur in the same first-use section or slide.
+When one of those terms is present there, it counts as the registry-backed
+first-use explanation even if the generic prose heuristic cannot recognize the
+sentence pattern.
 `roles` may contain `value` and/or `callable`. A value may still be a vector,
 matrix, tensor, or set; the label only means that it is not called with an
 argument list. Keep the registry restricted to
