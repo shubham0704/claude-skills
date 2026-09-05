@@ -57,14 +57,27 @@ Check using Glob and Read:
 
 ### 4) Notation pass
 
-Check using Grep across all `.tex` files:
+Run the ordered first-use checker before manual inspection:
+
+```bash
+python3 ~/.claude/skills/rigorous-paper-reviewer/scripts/check_latex_notation.py <path-to-main-tex> --scope main
+python3 ~/.claude/skills/rigorous-paper-reviewer/scripts/check_latex_notation.py <path-to-main-tex> --scope all
+```
+
+Use `--json` when another script will consume the inventory. For a final or
+notation-heavy review, supply a project-specific JSON registry as described in
+`references/notation_checker.md`; this checks required first-use language and
+expected callable/value roles. Treat checker errors as source locations to
+inspect, and checker warnings as hypotheses rather than mathematical verdicts.
+
+Then check manually across all `.tex` files:
 - symbols are defined before use
 - spaces, dimensions, norms, operators are explicit
 - overloaded notation is minimized
 - theorem and experiment notation are consistent
 - macros are stable and not duplicative (`\newcommand` vs `\providecommand` vs `\renewcommand`)
 
-Flag every undefined or drifting symbol with `file:line` references.
+Flag every confirmed undefined or drifting symbol with `file:line` references.
 
 ### 4a) Method-flow / reproducibility pass
 
