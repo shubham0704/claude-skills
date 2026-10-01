@@ -141,10 +141,16 @@ on the scientific problem and insight. The slide rehearsal, skill handoffs,
 and reversible review below are this repository's practical workflow.
 
 ```text
-Problem and insight -> teaching rehearsal -> reader check -> manuscript
-         ^                   ^                                  |
-         |                   +---- explanation gaps ------------+
-         +---- evidence, implementation, and review -------------+
+Problem and insight <----------------+
+       |                             |
+       v                             |
+Teaching rehearsal <--+              |
+       |              |              |
+       v              |              |
+Reader check ---------+              |
+       |                             |
+       v                             |
+Manuscript -- evidence and review ---+
 ```
 
 | Step | Skill | What carries forward |
