@@ -1,0 +1,12 @@
+{
+  "name": "explain-systems-visually",
+  "description": "Teach technical systems progressively with color-linked diagrams, equations, and algorithm steps; transfer the teaching sequence into a paper.",
+  "version": "1.0.0",
+  "skills": ["."],
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/explain-systems-visually",
+  "license": "MIT"
+}

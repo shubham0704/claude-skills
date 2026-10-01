@@ -1,0 +1,4 @@
+interface:
+  display_name: "Explain Systems Visually"
+  short_description: "Teach systems with clear progression and linked visuals"
+  default_prompt: "Use $explain-systems-visually to teach this system through prerequisite-aware steps, stable color-linked equations and algorithm blocks, and checks for transitions and recall."

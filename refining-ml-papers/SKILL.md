@@ -11,6 +11,7 @@ This skill captures battle-tested patterns for revising scientific LaTeX papers 
 ## When to Use This Skill
 
 Invoke when the user:
+
 - Has reviewer or advisor feedback to address
 - Wants to restructure paper sections (move content, merge sections)
 - Needs to explain tables or figures with concrete examples
@@ -51,7 +52,30 @@ Map each piece of feedback to a **concrete file + line range + action**:
 | "Sections redundant" | Merge + back-reference | methods.tex | Label conflicts |
 | "Abstract doesn't state problem" | Restructure abstract | main.tex | None |
 
-**Always use `EnterPlanMode`** for multi-file restructuring. Present the plan before editing.
+For multi-file restructuring, present the plan before editing and obtain any
+approval required by the user's workflow. Use available planning tools when
+helpful; do not depend on a tool that the current host does not provide.
+
+For a substantial narrative repair, rehearse the argument with an existing deck
+or a short slide-level storyboard before polishing paragraphs. Preserve the
+teaching dependencies, not one paragraph per slide. Use `rigorous-paper-author`
+for the story brief and `explain-systems-visually` for a rendered teaching deck
+when those skills are available; neither is mandatory for a small correction.
+
+### Phase 2a: Make the revision reversible
+
+Compare claims and structure explicitly: current claim, proposed claim, why,
+and exactly what is retained, moved, narrowed, or removed. Separate wording
+repairs from evidence gaps; do not fill a pending result with an anticipated win.
+Preserve a named source snapshot or scoped patch against the immediate current
+draft, including pre-existing edits. Do not treat an old published version as
+the baseline when the user is reviewing an intervening revision.
+
+When a before/after artifact is requested, resolve each version's references
+against its own build. Red/blue text should also have explicit Before/After
+labels. Keep result values, assumptions, equations, and unique contributions
+accounted for even when relocated. Confirm the preservation record after edits.
+Use the project's existing revision tooling instead of inventing a parallel system.
 
 ### Phase 3: Implementation Patterns
 
@@ -127,6 +151,7 @@ When two sections overlap (e.g., Sec 3.1 and Sec 3.2 both introduce PH dynamics)
 #### Pattern 5: Cross-File Consistency After Restructuring
 
 After moving content between files, verify:
+
 - Labels defined in one file aren't duplicated in another
 - `\ref{}` calls still resolve (compile and check log)
 - Notation is consistent (same macro names for the same symbols)
@@ -167,12 +192,14 @@ Appendix sections often accumulate dead code and robotic prose:
 When body prose sounds like a slogan or summary card, rewrite it so the reader sees the mechanism before the claim.
 
 Watch for sentences like:
+
 - "This provides an interface for domain knowledge."
 - "This shows the model is interpretable."
 - "This is the main diagnostic lesson."
 - "The result demonstrates robustness."
 
 Replace them with the concrete chain:
+
 - **Modeling choice**: what component, constraint, chart, loss, or algorithm step changes?
 - **Failure mode**: what goes wrong without it?
 - **Isolating evidence**: which ablation, metric, figure, or table shows the effect?
@@ -194,6 +221,65 @@ H=100 error under observation noise without changing the rollout architecture.
 Use contribution lists in the introduction when helpful, but avoid claim-map
 language in technical body paragraphs. Body paragraphs should teach the reader
 the mechanism, not recite the claim.
+
+#### Pattern 10: Failure-Mode-Driven Reframing
+
+When a paper feels assembled from good pieces but the story does not flow, rebuild the narrative around failure modes.
+
+Use this sequence:
+
+1. Name the operational failure mode in the introduction.
+2. State why existing work fails under that condition.
+3. Introduce the method component that addresses it.
+4. Cross-reference the algorithm chunk where the component is executed.
+5. Cross-reference the experiment, table, or figure that isolates the fix.
+6. State the scope boundary without weakening the core claim.
+
+Avoid organizing the main narrative as a survey of model families. Related work can use literature categories, but the introduction and method should use the problem-to-component-to-evidence chain.
+
+#### Pattern 11: Algorithm and Figure Continuity
+
+Algorithms should look like executable versions of the method diagram.
+
+For complex scientific ML methods:
+
+- add short semantic comments for each logical chunk
+- color comments consistently with the corresponding figure block when the paper already uses colored diagrams
+- cite the equation or subsection that defines each nontrivial update
+- keep wrapper logic, inner kernels, and training objectives in separate algorithms if combining them hurts readability
+- make the algorithm title honest: deployed transition, training objective, helper solve, critic interface, etc.
+
+If a figure and algorithm describe the same pipeline, use the same nouns, order, colors, and symbols in both.
+
+#### Pattern 12: Figures Should Show the Surprise
+
+Before adding or revising a figure, ask whether it merely describes the paper or shows the surprising behavior.
+
+Prefer figures that reveal:
+
+- a failure mode that standard metrics hide
+- a decomposition that only the proposed model exposes
+- a visual before/after from one modeling choice
+- a baseline breakdown under a realistic deployment condition
+- a typed residual, energy ledger, or physical accounting signal that a black-box model cannot produce
+
+Architecture diagrams are useful, but a teaser or main-result figure should usually show the phenomenon the reader should remember.
+
+#### Pattern 13: Research-Native Scope Language
+
+Replace implementation-coded or timid language with precise research language.
+
+Avoid terms like "pilot", "scoped", "chunk_crouch", "freeze=none", "action-veto pilot", or "we do not claim anything" in polished prose.
+
+Use explicit information contracts and method names instead:
+
+- "q-history deployment" instead of "q-only mode" when the contract matters
+- "receding-window observer" instead of "reobserve hack"
+- "template-known estimator" instead of "oracle-ish baseline"
+- "model-predictive critic" instead of "action-veto pilot"
+- "all parameters updated" / "core transition fixed" instead of code flags
+
+Limitations should name the boundary and preserve the claim: what was tested, what information each method received, and what remains for later work.
 
 ### Phase 4: Compilation & Verification
 
@@ -217,14 +303,20 @@ grep "multiply" main.log
 grep -i "warning" main.log | grep -v "Font\|pdf\|Unused\|size\|rerun\|float\|empty\|draft"
 ```
 
-**Visual verification**: Read the PDF pages where changes were made to confirm rendering.
+**Visual verification**: Inspect the rendered PDF pages where changes were made,
+including affected float and page-break neighbors. Check the before/after review
+as well as the clean output. Sweep repeated defects, not only the reported instance.
+Compilation and reference checks do not establish visual quality or comprehension.
 
 ### Phase 5: Git Workflow (Overleaf)
 
-For Overleaf-backed papers:
-- Commit with descriptive messages referencing the feedback addressed
-- Push directly to master (Overleaf syncs from master)
-- Only commit `.tex` and `.bib` files; exclude build artifacts (`.aux`, `.log`, `.pdf`, `.bbl`, `.blg`, `.out`)
+Inspect the actual repository, branch, remote, and existing changes before any
+Git operation. Editing authority is not automatic commit or push authority;
+respect a request to publish later. When publication is authorized, select only
+the intended changes and follow that repository's branch and artifact policies.
+Do not assume a branch named master, discard unrelated work, or silently resolve
+divergence. Preserve source figures and required assets according to the project;
+exclude transient build files unless its policy explicitly requires them.
 
 ## Common Revision Patterns by Feedback Type
 
@@ -245,7 +337,7 @@ For Overleaf-backed papers:
 
 ## LaTeX Pitfalls in Paper Revision
 
-See `PITFALLS.md` for the complete reference. Critical ones:
+See `references/PITFALLS.md` for the complete reference. Critical ones:
 
 | Issue | Cause | Fix |
 |-------|-------|-----|
@@ -275,12 +367,14 @@ Build: clean (N pages, 0 undefined refs, 0 warnings)
 ## Progressive Disclosure
 
 For detailed examples and pitfalls:
-- `PATTERNS.md` — Complete before/after examples from real revisions
-- `PITFALLS.md` — Comprehensive LaTeX pitfalls with fixes
+
+- `references/PATTERNS.md` — Complete before/after examples from real revisions
+- `references/PITFALLS.md` — Comprehensive LaTeX pitfalls with fixes
 
 ## Validation Checklist
 
 Before marking revision complete:
+
 - [ ] All feedback items addressed with specific file + line changes
 - [ ] Full compilation passes (pdflatex + bibtex + pdflatex × 2)
 - [ ] Zero undefined references in log
@@ -288,6 +382,12 @@ Before marking revision complete:
 - [ ] PDF visually verified on affected pages
 - [ ] No redundant content between sections (no reader déjà vu)
 - [ ] Abstract states the problem before the framework
+- [ ] Introduction maps failure modes to method components and evidence
+- [ ] Main claims are supported in main text, not only by appendix-only evidence
+- [ ] Baselines and ablations state their information contracts
+- [ ] Algorithms use the same symbols/order/nouns as the method text and figures
+- [ ] Algorithm comments cite equations or subsections for nontrivial chunks
+- [ ] Figures show a mechanism, failure mode, or result rather than duplicating prose
 - [ ] All tables with abstract entries have concrete explanations nearby
 - [ ] Label names match the section they're defined in (no `sec:methods:X` in intro)
 - [ ] Table claims match detailed text (footnote any qualified claims)

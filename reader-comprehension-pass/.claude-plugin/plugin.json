@@ -1,0 +1,12 @@
+{
+  "name": "reader-comprehension-pass",
+  "description": "Check what a reader can recover from the visible material, identify missing prerequisites, and preserve technical meaning during revision.",
+  "version": "1.0.0",
+  "skills": ["."],
+  "author": {
+    "name": "Shubham",
+    "url": "https://github.com/shubham0704"
+  },
+  "homepage": "https://github.com/shubham0704/claude-skills/tree/main/reader-comprehension-pass",
+  "license": "MIT"
+}

@@ -1,8 +1,8 @@
 ---
 name: paper-discourse-graph
-description: "Audit LaTeX papers as discourse graphs when paragraph flow, story continuity, readability, reader-state breadcrumbs, payoff chains, or figure/equation placement matter. Use when the user asks whether a section feels abrupt, wasteful, machine-generated, monotonous, hard to parse, or wants to zoom in/out across paragraphs before editing."
+description: "Audit LaTeX papers as discourse graphs when paragraph flow, story continuity, readability, reader-state breadcrumbs, payoff chains, appendix/supplement structure, or figure/equation placement matter. Use when the user asks whether a section feels abrupt, wasteful, machine-generated, monotonous, hard to parse, or wants to zoom in/out across paragraphs before editing; also use for GRE-style paragraph logic checks such as topic promise, paragraph unity, sentence-to-sentence coherence, given-to-new flow, overload, payoff, and handoff."
 metadata:
-  version: 0.1.4
+  version: 0.1.5
 ---
 
 # Paper Discourse Graph
@@ -21,14 +21,32 @@ discussion before editing, produce findings and proposed interventions
 only.
 
 Look for project-local guidance before running a generic pass:
+
 - `AGENT_REVIEW_BRIEF.md`
 - `docs/*review*brief*.md`
 - `tools/discourse_graph/profiles/*.json`
 - paper-specific profiles or terminology docs
 
-### 1.2 Choose a profile
+### 1.2 Check the whole argument before local polish
+
+For a paper-level revision, connect the opening question to the proposed insight,
+the mechanism, and the exact evidence that answers it. For a narrow edit, inspect
+only the relevant part of that chain. Distinguish three cases:
+
+- **Exposition gap:** the answer exists but its placement or explanation hides it.
+- **Evidence gap:** the paper has not yet answered the question; prose cannot close it.
+- **Scope mismatch:** the result answers a narrower or different question than promised.
+
+If a teaching deck exists, compare its prerequisites and payoff with the paper;
+do not import its spoken assumptions or one-slide-per-paragraph structure.
+When needed, rehearse a short storyboard before revising continuous prose.
+Report the most consequential gap first. Lexical overlap with a generic heading
+such as "Introduction" is not a useful acceptance criterion by itself.
+
+### 1.3 Choose a profile
 
 Use the most specific available profile:
+
 1. user-provided `--profile`
 2. project-local profile, if present
 3. bundled `references/profiles/cphast.json` for C-PHAST drafts
@@ -41,14 +59,18 @@ engine.
 For methods, theory, or appendix sections where paragraphs hand off to
 notation and equations, also read
 `references/formal_block_flow.md`.
+For appendix, supplement, benchmark-protocol, result-table, or
+figure-placement audits, also read
+`references/appendix_evidence_passes.md`.
 When authoring or revising source files and the user wants durable
 machine-readable breadcrumbs for later passes, read
 `references/source_semantic_comments.md`.
 For late-stage paragraph-by-paragraph refinement, task breakdowns for
-fresh agents, or requests to zoom into each paragraph with a fresh
-mind, read `references/paragraph_refinement_tasks.md`.
+fresh agents, requests to zoom into each paragraph with a fresh mind,
+or GRE-style paragraph evaluation of topic sentence, unity, coherence,
+development, and transition, read `references/paragraph_refinement_tasks.md`.
 
-### 1.3 Run the CLI
+### 1.4 Run the CLI
 
 From this skill directory:
 
@@ -79,12 +101,13 @@ python scripts/discourse_graph_audit.py <source.tex> \
   --llm-jsonl <nodes.jsonl>
 ```
 
-### 1.4 Interpret the report
+### 1.5 Interpret the report
 
 Treat the graph as triage, not truth. The labels are prompts for
 manual review.
 
 Important node roles:
+
 - `scene`: visible example or running situation
 - `question`: planted reader question
 - `claim`: assertion or section-level promise
@@ -99,6 +122,7 @@ Important node roles:
   author intent without rendering in the PDF
 
 Important risk labels:
+
 - `abrupt`: weak continuity into the current block
 - `detour`: useful material that may interrupt the active story
 - `unpaid_question`: a planted question without nearby payoff
@@ -130,6 +154,7 @@ Important risk labels:
 ## 2. Review Taste
 
 For each paragraph or block, ask:
+
 - What does the reader know right now?
 - What question did the previous block plant?
 - Does this block answer, sharpen, or defer that question?
@@ -138,6 +163,19 @@ For each paragraph or block, ask:
   implementation-bearing, or boundary-bearing?
 - If this became a task for a fresh agent, what local context,
   invariants, and claim boundaries would that task need?
+
+For sentence-level paragraph flow, use the paragraph-logic lens:
+
+- **Topic promise**: can the paragraph be summarized in 6--10 words?
+- **Unity**: does every sentence serve that promise?
+- **Given-to-new flow**: does each sentence start from known ground and
+  add one new object or relation?
+- **Load**: does the paragraph introduce more than two or three new
+  objects before payoff?
+- **Payoff**: does the final sentence tell the reader what changed or
+  why the paragraph mattered?
+- **Handoff**: does the next paragraph feel inevitable rather than
+  adjacent?
 
 Prefer a chain where understanding progressively accumulates:
 visible scene -> reader question -> mechanism -> formal object ->
@@ -155,6 +193,7 @@ what changed for the reader.
 ## 3. Output Format
 
 Report findings with:
+
 - file and line range
 - live reader question
 - risk label
@@ -162,6 +201,7 @@ Report findings with:
 - smallest proposed intervention
 
 Use labels:
+
 - **Payoff**: answers a live reader question
 - **Plant**: intentionally creates the next question
 - **Bridge**: connects intuition to a formal object
@@ -178,6 +218,9 @@ changes and ask which ones to land.
   heuristics, schema, and rendering code
 - `references/formal_block_flow.md`: detailed rubric for paragraphs,
   notation, equations, interpretation, and consistency
+- `references/appendix_evidence_passes.md`: appendix and supplement
+  rubric for reader entry, evidence co-location, reproduction value,
+  benchmark-role clarity, captions, and main-text linkage
 - `references/paragraph_refinement_tasks.md`: late-stage per-paragraph
   task protocol for fresh review passes
 - `references/source_semantic_comments.md`: optional `% DG:` comment

@@ -63,22 +63,27 @@ tool's path, both see the same source of truth.
 ## ⚡ Quick start
 
 Two install paths depending on what you're running. Pick **A** if you
-live in Claude Code and want auto-update. Pick **B** if you also use
+live in Claude Code and want marketplace-managed plugins. Pick **B** if you also use
 Codex and want a single source of truth for both tools.
 
-### A. Claude Code marketplace (auto-updates on every session start)
+### A. Claude Code marketplace
 
 ```
 /plugin marketplace add shubham0704/claude-skills
 /plugin install rpi-workflow@claude-skills
 /plugin install plan-to-dag@claude-skills
 /plugin install rigorous-paper-author@claude-skills
+/plugin install explain-systems-visually@claude-skills
+/plugin install reader-comprehension-pass@claude-skills
 /plugin install tikz-figure-review@claude-skills
 # ...etc, one per skill you want. See `/plugin` for the UI.
 ```
 
-Claude Code refreshes the marketplace on every session start and keeps
-installed plugins at the latest version. Zero manual `git pull` ever.
+To receive automatic updates, enable auto-update for `claude-skills` in
+the `/plugin` marketplace settings. Third-party marketplaces do not enable
+it by default. You can also run `claude plugin marketplace update claude-skills`
+and `claude plugin update <skill-name>@claude-skills` from your shell.
+See [Claude Code's update instructions](https://code.claude.com/docs/en/discover-plugins#keep-plugins-updated).
 
 ### B. Git clone + symlink (works with both Claude Code *and* Codex)
 
@@ -108,8 +113,10 @@ Not sure where to begin? Match your situation to the first skill:
 | If you're... | Start with | Because |
 |---|---|---|
 | **Sitting with a raw, half-formed research idea** | `research-companion` *(external)* | Adversarial sparring partner on the idea itself before you invest any drafting effort. |
-| **Trying to prove you actually understand a concept** | [`enhancing-latex-lectures`](enhancing-latex-lectures/) | **Feynman test.** If you can't teach it with a stunning visualization, you haven't earned the right to claim it in a paper yet. |
-| **Drafting a theory-heavy paper from scratch** | [`rigorous-paper-author`](rigorous-paper-author/) | Enforces claim graphs, notation ledgers, and theorem discipline before you write a single sentence. |
+| **Trying to understand a concept well enough to teach it** | [`enhancing-latex-lectures`](enhancing-latex-lectures/) | Uses concrete examples and visual explanations to expose gaps in understanding. Teachability complements, but does not replace, scientific verification. |
+| **Starting or substantially reframing a paper** | [`rigorous-paper-author`](rigorous-paper-author/) | Establishes the problem, insight, prior art, and testable claim; rehearses the argument before extensive prose while preserving mathematical rigor. |
+| **Teaching a method before writing it up** | [`explain-systems-visually`](explain-systems-visually/) | Builds a progressive explanation with stable colors, symbols, and algorithm-step references, then maps it into the paper. |
+| **Unsure what a new reader will understand** | [`reader-comprehension-pass`](reader-comprehension-pass/) | Asks a reader to explain the argument from the visible material and locates missing prerequisites. |
 | **Hardening a draft before submission** | [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | 7-pass adversarial read finds the cracks a sympathetic eye misses. |
 | **A section feels hard to follow** | [`paper-discourse-graph`](paper-discourse-graph/) | Audits paragraphs as a reader-state graph: planted questions, payoffs, bridges, detours, and abrupt jumps. |
 | **Reviewer comments just came back** | [`refining-ml-papers`](refining-ml-papers/) | Addresses comments without breaking the claim graph; surgical revisions. |
@@ -117,6 +124,74 @@ Not sure where to begin? Match your situation to the first skill:
 | **Breaking a large plan into parallel work** | [`plan-to-dag`](plan-to-dag/) | Converts roadmaps into dependency-aware DAGs with waves, validation gates, ownership boundaries, and subagent prompt packs. |
 | **One figure looks wrong** | [`tikz-figure-review`](tikz-figure-review/) | 11 documented failure modes + standalone iteration loop. |
 | **Paper accepted, conference coming up** | `poster` *(external)* | Turns paper source + website into shippable print-ready poster with a live in-browser editor. |
+
+---
+
+## Writing a paper: teach it before polishing it
+
+Use slides to discover the argument before polishing the paper. Start with
+the reader's problem, explain why the proposed approach could help, teach
+the mechanism progressively, and return to the problem with evidence.
+The goal is not a polished deck before every paragraph: an existing,
+source-current deck or a short storyboard may be enough.
+
+The [story-first guide](rigorous-paper-author/references/story_first_papers.md)
+adapts Michael J. Black's [writing advice](https://is.mpg.de/news/writing-a-good-scientific-paper)
+on the scientific problem and insight. The slide rehearsal, skill handoffs,
+and reversible review below are this repository's practical workflow.
+
+```text
+Problem and insight -> teaching rehearsal -> reader check -> manuscript
+         ^                   ^                                  |
+         |                   +---- explanation gaps ------------+
+         +---- evidence, implementation, and review -------------+
+```
+
+| Step | Skill | What carries forward |
+|---|---|---|
+| **Frame the question** | [`rigorous-paper-author`](rigorous-paper-author/) | Audience, task, stakes, obstacle, proposed insight, closest prior work, and evidence that could support or challenge the claim. |
+| **Rehearse the explanation** | [`explain-systems-visually`](explain-systems-visually/) | A storyboard or deck: concrete example, prerequisites, mechanism, formalism, and results. Each reveal answers a question and prepares the next. |
+| **Find the first missing bridge** | [`reader-comprehension-pass`](reader-comprehension-pass/) and [`paper-discourse-graph`](paper-discourse-graph/) | A reader's retelling and a diagnosis: unclear exposition, missing evidence, or a mismatch between the opening promise and the result. |
+| **Write and formalize** | [`rigorous-paper-author`](rigorous-paper-author/) | A provisional introduction, claim graph, notation ledger, section contracts, and a mapping from the teaching sequence to prose, figures, equations, and algorithms. |
+| **Test the claims** | Project methods, code, proofs, and experiments | Traceable evidence with assumptions, comparison conditions, and limitations. Results can change the story; planned wins are not findings. |
+| **Review and revise** | [`rigorous-paper-reviewer`](rigorous-paper-reviewer/), then [`refining-ml-papers`](refining-ml-papers/) | Technical findings, a claim-level before/after comparison, an approved revision, and checked rendered output with a rollback point. |
+
+**Slides are a rehearsal, not the paper's layout.** Keep the same terminology,
+symbols, semantic colors, and algorithm-step identifiers across both. Replace
+spoken transitions with self-contained prose; consolidate repeated overview
+slides and overlays instead of turning every slide into a paragraph. An
+algorithm's nontrivial steps should point to the equations and explanations
+that define them. Color reinforces those links but never replaces labels.
+
+**Check understanding without supplying the answer.** Give a fresh reader
+the intended audience and visible material, not author notes or an answer key.
+Ask what problem is being solved, why the approach could help, what was
+demonstrated, and what remains unresolved. Ask where the text supplied each
+answer. An agent reader can expose gaps, but is not a human comprehension
+study, a correctness proof, or verification of experimental results.
+
+Keep scientific support, agreement with the implementation, reader
+understanding, and rendered correctness as separate checks. A smooth story
+cannot replace an absent experiment, and a clean compile cannot establish
+that an explanation is understandable. Finalize the introduction and abstract
+against the work actually completed, including results that weakened the
+original hypothesis.
+
+For example, ask:
+
+```text
+Use rigorous-paper-author and explain-systems-visually to rehearse our
+paper's argument using the current source, existing slides, and evidence.
+Show the problem, insight, borrowed ideas, mechanism, and supported result.
+Map the teaching sequence into the paper and identify missing bridges.
+Before editing, show which claims stay, move, narrow, or disappear.
+```
+
+For a sentence, caption, or notation fix, work locally; do not create a full
+deck or review team. For a major revision, one author should integrate the
+argument, with independent technical and reader passes when available and
+authorized. See the [abstract guide](rigorous-paper-author/references/abstract_revision_patterns.md)
+for shortening prose without changing its claims.
 
 ---
 
@@ -138,13 +213,15 @@ Brainstorming, strategic triage, research-the-problem.
 
 ### 2. Express 📝 — worth writing down → defensibly correct *and teachable*
 
-Authoring, review, revision, teaching, visualization. This is also
-where the **Feynman test** lives: if you can't teach it simply, you
-don't understand it, and you go back to Polish.
+Authoring, review, revision, teaching, visualization. Explaining a concept
+can expose gaps that send you back to Polish. A clear explanation remains
+separate from proof or experimental support.
 
 | Skill | Your specialist | What they do |
 |---|---|---|
-| [`rigorous-paper-author`](rigorous-paper-author/) | **Theory-Paper Ghostwriter** | Draft mathematically rigorous LaTeX papers with claim graphs, notation ledgers, theorem discipline, and numerical-analysis rigor. |
+| [`rigorous-paper-author`](rigorous-paper-author/) | **Paper Author** | Develop the scientific argument, rehearse its teaching sequence, and draft rigorous LaTeX with claim graphs, notation ledgers, and proof obligations. |
+| [`explain-systems-visually`](explain-systems-visually/) | **Technical Teaching Designer** | Explain systems progressively; link diagrams, equations, and algorithm steps, then transfer the explanation into prose. |
+| [`reader-comprehension-pass`](reader-comprehension-pass/) | **First-Reader Check** | Find missing prerequisites and unsupported jumps through an unprompted retelling of the audience-facing material. |
 | [`rigorous-paper-reviewer`](rigorous-paper-reviewer/) | **PhD-Committee Reviewer** | 7-pass adversarial technical review (structure, notation, theorem/proof, numerics, complexity, figures, coherence) with a static Python verifier for automated triage. |
 | [`paper-discourse-graph`](paper-discourse-graph/) | **Reader-State Cartographer** | Turns a LaTeX section into a discourse graph so flow/readability passes can see planted questions, payoffs, detours, abrupt jumps, and unconnected evidence before editing. |
 | [`refining-ml-papers`](refining-ml-papers/) | **Revision Surgeon** | Revise ML/scientific LaTeX papers based on reviewer or advisor feedback — structural reorganization, table instantiation, cross-file deduplication. |
@@ -169,9 +246,15 @@ Research the codebase, plan the change, adversarially review the plan,
 Phases aren't silos. Each skill produces artifacts that downstream
 skills consume, so a full cycle threads through multiple skills:
 
-- **Polish → Express (idea to draft).** `research-companion` produces
-  a validated research direction. Hand it to `rigorous-paper-author`
-  (papers) or `rpi-workflow`'s research phase (code).
+- **Polish → Express (idea to argument).** `research-companion` helps
+  examine a proposed research direction; that discussion does not validate
+  its claims. Hand the question and available evidence to
+  `rigorous-paper-author` (papers) or `rpi-workflow`'s research phase (code).
+- **Express → Express (slides to paper).** Follow the
+  [paper-writing workflow](#writing-a-paper-teach-it-before-polishing-it):
+  rehearse with `explain-systems-visually`, check what a reader can recover,
+  then translate the explanation into manuscript structure. New gaps return
+  to the relevant teaching, modeling, or evidence step.
 - **Express → Express (draft ↔ review loop).**
   `rigorous-paper-author` emits a draft with a claim graph.
   `rigorous-paper-reviewer` reads the draft and writes a 7-pass review
